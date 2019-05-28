@@ -12,134 +12,103 @@ import {
   LocalAddress,
   Contracts,
   EthersSigner,
-  CachedNonceTxMiddleware
+  createDefaultTxMiddleware
 } from 'loom-js'
-var web3js
-var data = {
-  chainId: 'extdev-plasma-us1',
-  writeUrl: 'wss://extdev-plasma-us1.dappchains.com/websocket',
-  readUrl: 'wss://extdev-plasma-us1.dappchains.com/queryws',
-  networkId: 9545242630824,
-  callerChainId: 'eth',
-  ethAddress: null,
-  client: null,
-  loomProvider: null,
-  contract: null,
-  publicKey: null
-}
+
 const Web3 = require('web3')
 
-function getPrivateKey () {
-  let privateKeyString
-  let privateKey
-  if (sessionStorage.getItem('privateKeyString') == null) {
-    privateKey = CryptoUtils.generatePrivateKey()
-    privateKeyString = CryptoUtils.Uint8ArrayToB64(privateKey)
-    sessionStorage.setItem('privateKeyString', privateKeyString)
-  } else {
-    privateKeyString = sessionStorage.getItem('privateKeyString')
-    privateKey = CryptoUtils.B64ToUint8Array(privateKeyString)
-  }
-  return privateKey
-}
-
-async function init () {
-  const privateKey = getPrivateKey()
-  data.publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
-  data.client = new Client(
-    data.chainId,
-    data.writeUrl,
-    data.readUrl
-  )
-  const ethersProvider = new ethers.providers.Web3Provider(web3js.currentProvider)
-  const signer = ethersProvider.getSigner()
-  data.client.txMiddleware = [
-    new CachedNonceTxMiddleware(data.publicKey, data.client),
-    new SignedEthTxMiddleware(signer)
-  ]
-  data.ethAddress = await signer.getAddress()
-  const to = new Address('eth', LocalAddress.fromHexString(data.ethAddress))
-  const from = new Address(data.client.chainId, LocalAddress.fromPublicKey(data.publicKey))
-  const addressMapper = await Contracts.AddressMapper.createAsync(
-    data.client,
-    new Address(data.client.chainId, LocalAddress.fromPublicKey(data.publicKey))
-  )
-  if (await addressMapper.hasMappingAsync(to)) {
-    console.log('Mapping already exists')
-    const mapping = await addressMapper.getMappingAsync(from)
-    if (mapping.to.toString() !== to.toString()) {
-      console.log('Your Loom Address is mapped to a different Ethereum address. Please switch to ' + data.ethAddress)
-      return false
-    }
-  } else {
-    const ethersSigner = new EthersSigner(signer)
-    await addressMapper.addIdentityMappingAsync(from, to, ethersSigner)
-  }
-  data.loomProvider = new LoomProvider(data.client, privateKey)
-  data.loomProvider.callerChainId = data.callerChainId
-  data.loomProvider.setMiddlewaresForAddress(to.local.toString(), [
-    new NonceTxMiddleware(
-      new Address(data.callerChainId, LocalAddress.fromHexString(data.ethAddress)),
-      data.client
-    ),
-    new SignedEthTxMiddleware(signer)
-  ])
-  return true
-}
-
-async function getContract () {
-  const web3 = new Web3(data.loomProvider)
-  data.contract = new web3.eth.Contract(SimpleStoreJSON.abi, SimpleStoreJSON.networks[data.networkId].address)
-}
-
-async function testEthSigning () {
-  const value = 100
-  const tx = await data.contract.methods
-    .set(100)
-    .send({
-      from: data.ethAddress
-    })
-  const ret = tx.events.NewValueSet.returnValues._value
-  if (value.toString() === tx.events.NewValueSet.returnValues._value) {
-    console.log('Looking good! Expected: ' + value + ', Returned: ' + ret)
-  } else {
-    console.log('An error occured! Expected: ' + value + ', Returned: ' + ret)
-  }
-}
-async function ethSigningDemo () {
-  if (await init()) {
-    await getContract()
-    await testEthSigning()
-  }
-}
-
-window.addEventListener('load', async function () {
-  // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-  if (typeof window.web3 !== 'undefined') {
-    web3js = new Web3(web3.currentProvider)
-    await ethSigningDemo()
-  } else {
-    // Handle the case where the user doesn't have Metamask installed
-    // Probably show them a message prompting them to install Metamask
-    console.log('Please install Metamask.')
-  }
-})
-
-/*var sample = new Vue({
+var sample = new Vue({
   el: '#increase-counter',
   data: {
     counter: 0,
-    web3js: null
+    web3js: null,
+    chainId: 'extdev-plasma-us1',
+    writeUrl: 'wss://extdev-plasma-us1.dappchains.com/websocket',
+    readUrl: 'wss://extdev-plasma-us1.dappchains.com/queryws',
+    networkId: 9545242630824,
+    callerChainId: 'eth',
+    ethAddress: null,
+    client: null,
+    loomProvider: null,
+    contract: null,
+    publicKey: null
+  },
+  methods: {
+    async init () {
+      const privateKey = CryptoUtils.generatePrivateKey()
+      this.publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
+      this.client = new Client(
+        this.chainId,
+        this.writeUrl,
+        this.readUrl
+      )
+      const ethersProvider = new ethers.providers.Web3Provider(this.web3js.currentProvider)
+      const signer = ethersProvider.getSigner()
+      this.ethAddress = await signer.getAddress()
+      const to = new Address('eth', LocalAddress.fromHexString(this.ethAddress))
+      const from = new Address(this.client.chainId, LocalAddress.fromPublicKey(this.publicKey))
+      this.client.txMiddleware = createDefaultTxMiddleware(this.client, privateKey)
+      const addressMapper = await Contracts.AddressMapper.createAsync(
+        this.client,
+        new Address(this.client.chainId, LocalAddress.fromPublicKey(this.publicKey))
+      )
+      if (await addressMapper.hasMappingAsync(to)) {
+        console.log('Mapping already exists.')
+      } else {
+        console.log('Adding a new mapping.')
+        const ethersSigner = new EthersSigner(signer)
+        await addressMapper.addIdentityMappingAsync(from, to, ethersSigner)
+      }
+      this.loomProvider = new LoomProvider(this.client, privateKey)
+      this.loomProvider.callerChainId = this.callerChainId
+      this.loomProvider.setMiddlewaresForAddress(to.local.toString(), [
+        new NonceTxMiddleware(
+          new Address(this.callerChainId, LocalAddress.fromHexString(this.ethAddress)),
+          this.client
+        ),
+        new SignedEthTxMiddleware(signer)
+      ])
+      return true
+    },
+
+    async getContract () {
+      const web3 = new Web3(this.loomProvider)
+      this.contract = new web3.eth.Contract(SimpleStoreJSON.abi, SimpleStoreJSON.networks[this.networkId].address)
+    },
+
+    async testEthSigning () {
+      const value = 100
+      const tx = await this.contract.methods
+        .set(100)
+        .send({
+          from: this.ethAddress
+        })
+      const ret = tx.events.NewValueSet.returnValues._value
+      if (value.toString() === tx.events.NewValueSet.returnValues._value) {
+        console.log('Looking good! Expected: ' + value + ', Returned: ' + ret)
+      } else {
+        console.log('An error occured! Expected: ' + value + ', Returned: ' + ret)
+      }
+    },
+
+    async  ethSigningDemo () {
+      if (await this.init()) {
+        await this.getContract()
+        await this.testEthSigning()
+      }
+    },
+
+    async loadWeb3 () {
+      if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider)
+        this.web3js = new Web3(window.web3.currentProvider)
+      } else {
+        alert('Metamask is not Enabled')
+      }
+    }
   },
   async mounted () {
-    console.log('mounted')
-    if (typeof window.web3 !== 'undefined') {
-      this.currentProviderweb3js = new Web3(window.web3.currentProvider)
-      await ethSigningDemo()
-    } else {
-      // Handle the case where the user doesn't have Metamask installed
-      // Probably show them a message prompting them to install Metamask
-      console.log('Please install Metamask.')
-    }
+    await this.loadWeb3()
+    await this.ethSigningDemo()
   }
-})*/
+})
