@@ -30,8 +30,16 @@ var data = {
 const Web3 = require('web3')
 
 function getPrivateKey () {
-  let privateKeyString = 'b5s2U8j2nVfWXkYRSi1VnsDDLyv7H9V6tfXkC8tXvf6MqkIsjwLZ35/CYRYIsltZhLohO4tOGuJ0a73V4r9lgg=='
-  const privateKey = CryptoUtils.B64ToUint8Array(privateKeyString)
+  let privateKeyString
+  let privateKey
+  if (sessionStorage.getItem('privateKeyString') == null) {
+    privateKey = CryptoUtils.generatePrivateKey()
+    privateKeyString = CryptoUtils.Uint8ArrayToB64(privateKey)
+    sessionStorage.setItem('privateKeyString', privateKeyString)
+  } else {
+    privateKeyString = sessionStorage.getItem('privateKeyString')
+    privateKey = CryptoUtils.B64ToUint8Array(privateKeyString)
+  }
   return privateKey
 }
 
@@ -45,6 +53,10 @@ async function init () {
   )
   const ethersProvider = new ethers.providers.Web3Provider(web3js.currentProvider)
   const signer = ethersProvider.getSigner()
+  data.client.txMiddleware = [
+    new CachedNonceTxMiddleware(data.publicKey, data.client),
+    new SignedEthTxMiddleware(signer)
+  ]
   data.ethAddress = await signer.getAddress()
   const to = new Address('eth', LocalAddress.fromHexString(data.ethAddress))
   const from = new Address(data.client.chainId, LocalAddress.fromPublicKey(data.publicKey))
