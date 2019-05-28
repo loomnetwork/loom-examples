@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development",
-    "migrate": " cd truffle && truffle migrate --network extdev"
+    "migrate": " cd truffle && truffle migrate --network extdev",
+    "gen:loom-key": "mkdir loom && cd loom && curl https://raw.githubusercontent.com/loomnetwork/loom-sdk-documentation/master/scripts/get_loom.sh | sh && chmod +x ./loom && ./loom genkey --private_key loom_private_key --public_key loom_public_key && cp loom_private_key ../truffle/"
   },
   "keywords": [],
   "author": "",
