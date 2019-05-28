@@ -11,10 +11,11 @@
 <body>
 
     <div id="increase-counter">
-        <button v-on:click="counter += 1">Add 1</button>
-        <p>{{ counter }}.</p>
+        <p>Counter is: {{ counter }}.</p>
+        <button v-on:click.prevent="increment">+</button>
+        <button v-on:click.prevent="decrement">-</button>
+        <p>Info: {{ info }}.</p>
     </div>
 
 </body>
 </html>
-

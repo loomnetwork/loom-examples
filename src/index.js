@@ -21,6 +21,7 @@ var sample = new Vue({
   el: '#increase-counter',
   data: {
     counter: 0,
+    info: 'You will see a Metamask popup. Sign the transaction and wait a bit it gets initialized...',
     web3js: null,
     chainId: 'extdev-plasma-us1',
     writeUrl: 'wss://extdev-plasma-us1.dappchains.com/websocket',
@@ -77,23 +78,47 @@ var sample = new Vue({
     },
 
     async testEthSigning () {
-      const value = 100
-      const tx = await this.contract.methods
-        .set(100)
+      const value = parseInt(this.counter, 10)
+      await this.contract.methods
+        .set(value)
         .send({
           from: this.ethAddress
         })
-      const ret = tx.events.NewValueSet.returnValues._value
-      if (value.toString() === tx.events.NewValueSet.returnValues._value) {
-        console.log('Looking good! Expected: ' + value + ', Returned: ' + ret)
+    },
+
+    async increment () {
+      this.info = 'Please sign the transaction.'
+      this.counter += 1
+      await this.testEthSigning()
+    },
+
+    async decrement () {
+      this.info = 'Please sign the transaction.'
+      if (this.counter > 0) {
+        this.counter -= 1
+        await this.testEthSigning()
       } else {
-        console.log('An error occured! Expected: ' + value + ', Returned: ' + ret)
+        console.log('counter should be > 1.')
       }
+    },
+
+    async filterEvents () {
+      this.contract.events.NewValueSet({ filter: { } }, (err, event) => {
+        if (err) console.error('Error on event', err)
+        else {
+          if (event.returnValues._value.toString() === this.counter.toString()) {
+            this.info = 'Looking good! Expected: ' + this.counter.toString() + ', Returned: ' + event.returnValues._value.toString()
+          } else {
+            this.info = 'An error occured! Expected: ' + this.counter.toString() + ', Returned: ' + event.returnValues._value.toString()
+          }
+        }
+      })
     },
 
     async  ethSigningDemo () {
       if (await this.init()) {
         await this.getContract()
+        await this.filterEvents()
         await this.testEthSigning()
       }
     },
