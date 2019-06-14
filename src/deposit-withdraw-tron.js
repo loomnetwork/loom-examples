@@ -36,7 +36,7 @@ var sample = new Vue({
       const loomAddress = LocalAddress.fromPublicKey(publicKey)
       this.loomAddressInHex = loomAddress.toString()
       const tronAddrInHex = this.tronWeb.address.toHex(this.tronAddrBase58)
-      const trxAddress = '0x' + tronAddrInHex.substring(2,100)
+      const trxAddress = '0x' + tronAddrInHex.substring(2, 100)
       this.trxAddrObj = Address.fromString(`tron:${trxAddress}`)
 
       this.client = new Client(
@@ -96,11 +96,36 @@ var sample = new Vue({
     async withdrawTRX () {
       await this.loomTRX.methods.approve(LOOM_GATEWAY_ADDRESS, TRX_AMOUNT).send({ from: this.loomAddressInHex })
       let approvedBalance = 0
-      const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+      const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
       while (approvedBalance == 0) {
         approvedBalance = await this.loomTRX.methods.allowance(this.loomAddressInHex, LOOM_GATEWAY_ADDRESS).call({ from: this.loomAddressInHex })
         delay(5000)
       }
+
+      const timeout = 60 * 1000
+      const gatewayContract = this.loomGateway
+      const receiveSignedWithdrawalEvent = new Promise((resolve, reject) => {
+        let timer = setTimeout(
+          () => reject(new Error('Timeout while waiting for withdrawal to be signed')),
+          timeout
+        )
+        const listener = event => {
+          console.log('receiveSignedWithdrawalEvent resolved')
+
+          if (
+            event.tokenContract.local.toString() === TRON_DAPP_ADDRESS &&
+            event.tokenOwner.toString() === this.trxAddrObj.toString()
+          ) {
+            clearTimeout(timer)
+            timer = null
+            gatewayContract.removeAllListeners(Contracts.TransferGateway.EVENT_TOKEN_WITHDRAWAL)
+            console.log('Oracle signed tx ', CryptoUtils.bytesToHexAddr(event.sig))
+            resolve(event)
+          }
+        }
+        gatewayContract.on(Contracts.TransferGateway.EVENT_TOKEN_WITHDRAWAL, listener)
+      })
+
       let receipt
       let sig
       try {
@@ -115,6 +140,8 @@ var sample = new Vue({
           console.log(err2)
         }
       }
+
+      await receiveSignedWithdrawalEvent
       this.resumeWithdrawal()
     },
 
@@ -146,6 +173,24 @@ var sample = new Vue({
       let v = '0x' + sig.slice(130, 132)
       v = this.loomWeb3.utils.toDecimal(v)
       await this.tronGateway.withdrawTRX(TRX_AMOUNT, r, s, v).send({ from: this.tronAddrBase58 })
+
+      console.log('waiting for shasta balance to get updated')
+      const maxRetries = 10
+      let retries = 0
+      const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+      const initialShastaBalance = await this.tronWeb.trx.getBalance(this.tronAddrBase58)
+      let currentShastaBalance = initialShastaBalance
+      while (initialShastaBalance == currentShastaBalance && retries < maxRetries) {
+        currentShastaBalance = await this.tronWeb.trx.getBalance(this.tronAddrBase58)
+        await delay(2000)
+        retries++
+      }
+      if (retries == maxRetries) {
+        console.log('Waiting is over... No change!')
+      } else {
+        console.log('Balance updated after ' + retries + ' retries. Refreshing balances')
+        await this.refreshBalance()
+      }
     },
     async depositWithdrawTRXExample () {
       try {
