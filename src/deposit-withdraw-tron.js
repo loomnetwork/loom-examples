@@ -64,6 +64,7 @@ var sample = new Vue({
           throw (error)
         }
       } else {
+        console.log('Address mapping already exists.')
       }
     },
     async getLoomTRXContract () {
@@ -233,10 +234,6 @@ var sample = new Vue({
 
       return resolve()
     })
-
-    if (!this.isInitialize) {
-      this.isInitialize = true
-    }
     await this.depositWithdrawTRXExample()
   }
 })

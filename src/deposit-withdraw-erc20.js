@@ -98,7 +98,7 @@ var sample = new Vue({
       return true
     },
 
-    async mapCoinContracts () {
+    async mapContracts () {
       const foreignContract = new Address(
         'eth',
         LocalAddress.fromHexString(this.mainNetCoinContractAddress)
