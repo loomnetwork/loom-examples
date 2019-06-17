@@ -309,6 +309,7 @@ var sample = new Vue({
       if (window.web3) {
         window.web3 = new Web3(window.web3.currentProvider)
         this.web3js = new Web3(window.web3.currentProvider)
+        await ethereum.enable()
       } else {
         alert('Metamask is not Enabled')
       }
