@@ -4,8 +4,8 @@ import {
 
 import Portis from '@portis/web3'
 import Web3 from 'web3'
-
 import SimpleStoreJSON from '../truffle/build/contracts/SimpleStore.json'
+
 import {
   NonceTxMiddleware,
   SignedEthTxMiddleware,
@@ -22,7 +22,7 @@ import {
 var sample = new Vue({
   el: '#counter',
   data: {
-    info: 'Portis demo',
+    info: 'Portis demo. Wait a bit until it gets initialized.',
     counter: 0,
     web3js: null,
     publicKey: null,
@@ -30,7 +30,11 @@ var sample = new Vue({
     writeUrl: 'wss://extdev-plasma-us1.dappchains.com/websocket',
     readUrl: 'wss://extdev-plasma-us1.dappchains.com/queryws',
     client: null,
-    web3Ethereum: null
+    web3Ethereum: null,
+    loomProvider: null,
+    contract: null,
+    networkId: 9545242630824,
+    callerChainId: 'eth'
   },
   methods: {
     async init () {
@@ -41,7 +45,9 @@ var sample = new Vue({
         this.writeUrl,
         this.readUrl
       )
-      const ethersProvider = new ethers.providers.Web3Provider(this.web3js.currentProvider)
+      let portis = this.web3js.currentProvider
+      portis.isMetaMask = true
+      const ethersProvider = new ethers.providers.Web3Provider(portis)
       const signer = ethersProvider.getSigner()
       this.ethAddress = await signer.getAddress()
       console.log('ethAddress: ' + this.ethAddress)
@@ -72,35 +78,69 @@ var sample = new Vue({
         console.log('mapping.from: ' + mapping.from.local.toString())
         this.loomAddress = mapping.to.local.toString()
       }
-    },
-    async testSig () {
-      //let accounts = await this.web3js.eth.getAccounts()
-      //console.log('Portis address: ' + accounts[0])
-      let from = '0x93a691283F897Dce50e80419ff069d566aEaB0C7'
-      let message = this.web3js.utils.toHex("Hello world!");
-      let signedMessage = await this.web3js.currentProvider.send("personal_sign", [
-        message,
-        from
-      ])
-      console.log(`Portis signed message: ${signedMessage}`)
+      this.loomProvider = new LoomProvider(this.client, privateKey)
+      this.loomProvider.callerChainId = this.callerChainId
 
-      //let accounts = await this.web3js.eth.getAccounts()
-      from = '0x93a691283F897Dce50e80419ff069d566aEaB0C7'
-      console.log('Metamask account: ' + from)
-      message = this.web3Ethereum.utils.toHex("Hello world!");
-      signedMessage = await this.web3Ethereum.eth.personal.sign(message, from)
-      console.log(`Metamask signed message: ${signedMessage}`)
+      this.loomProvider.setMiddlewaresForAddress(to.local.toString(), [
+        new NonceTxMiddleware(
+          new Address(this.callerChainId, LocalAddress.fromHexString(this.ethAddress)),
+          this.client
+        ),
+        new SignedEthTxMiddleware(signer)
+      ])
+      return true
+    },
+    async getContract () {
+      const web3 = new Web3(this.loomProvider)
+      this.contract = new web3.eth.Contract(SimpleStoreJSON.abi, SimpleStoreJSON.networks[this.networkId].address)
+    },
+    async testEthSigning () {
+      const value = parseInt(this.counter, 10)
+      await this.contract.methods
+        .set(value)
+        .send({
+          from: this.ethAddress
+        })
+    },
+    async increment () {
+      this.info = 'Please sign the transaction.'
+      this.counter += 1
+      await this.testEthSigning()
+    },
+
+    async decrement () {
+      this.info = 'Please sign the transaction.'
+      if (this.counter > 0) {
+        this.counter -= 1
+        await this.testEthSigning()
+      } else {
+        console.log('counter should be > 1.')
+      }
+    },
+    async filterEvents () {
+      this.contract.events.NewValueSet({ filter: { } }, (err, event) => {
+        if (err) console.error('Error on event', err)
+        else {
+          if (event.returnValues._value.toString() === this.counter.toString()) {
+            this.info = 'Looking good! Expected: ' + this.counter.toString() + ', Returned: ' + event.returnValues._value.toString()
+          } else {
+            this.info = 'An error occured! Expected: ' + this.counter.toString() + ', Returned: ' + event.returnValues._value.toString()
+          }
+        }
+      })
+    },
+    async  ethSigningDemo () {
+      if (await this.init()) {
+        await this.getContract()
+        await this.filterEvents()
+        await this.testEthSigning()
+      }
     }
   },
   async mounted () {
-    const portis = new Portis('c4c01c30-b889-4d04-a965-ef55adeff66e', 'rinkeby')
+    const portis = new Portis('YOUR DAPP ID', 'rinkeby')
+    await portis.showPortis()
     this.web3js = new Web3(portis.provider)
-    if (typeof ethereum !== 'undefined') {
-      ethereum.enable()
-      .catch(console.error)
-    }
-    this.web3Ethereum = new Web3(window.web3.currentProvider)
-    await this.testSig()
-    //await this.init()
+    await this.ethSigningDemo()
   }
 })
