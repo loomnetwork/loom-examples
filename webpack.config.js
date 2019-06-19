@@ -9,7 +9,8 @@ module.exports = {
     ethsigning: ['babel-polyfill', './src/eth-signing.js'],
     depositwithdraweth: ['babel-polyfill', './src/deposit-withdraw-eth.js'],
     depositwithdrawerc20: ['babel-polyfill', './src/deposit-withdraw-erc20.js'],
-    depositwithdrawtron: ['babel-polyfill', './src/deposit-withdraw-tron.js']
+    depositwithdrawtron: ['babel-polyfill', './src/deposit-withdraw-tron.js'],
+    ethsigningportis: ['babel-polyfill', './src/eth-signing-portis.js']
   },
   output: {
     filename: '[name].[hash:20].js',
@@ -45,6 +46,12 @@ module.exports = {
       inject: true,
       chunks: ['depositwithdrawtron'],
       filename: 'deposit-withdraw-tron.html'
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/eth-signing-portis.html',
+      inject: true,
+      chunks: ['ethsigningportis'],
+      filename: 'eth-signing-portis.html'
     }),
     new CleanWebpackPlugin()
   ],
