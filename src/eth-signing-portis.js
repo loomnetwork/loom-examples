@@ -45,9 +45,9 @@ var sample = new Vue({
         this.writeUrl,
         this.readUrl
       )
-      let portis = this.web3js.currentProvider
-      portis.isMetaMask = true
-      const ethersProvider = new ethers.providers.Web3Provider(portis)
+      let provider = this.web3js.currentProvider
+      provider.isMetaMask = true
+      const ethersProvider = new ethers.providers.Web3Provider(provider)
       const signer = ethersProvider.getSigner()
       this.ethAddress = await signer.getAddress()
       console.log('ethAddress: ' + this.ethAddress)
