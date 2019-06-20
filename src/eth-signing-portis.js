@@ -38,7 +38,7 @@ var sample = new Vue({
   },
   methods: {
     async init () {
-      const privateKey = CryptoUtils.generatePrivateKey()
+      const privateKey = this.getPrivateKey()
       this.publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
       this.client = new Client(
         this.chainId,
@@ -90,6 +90,16 @@ var sample = new Vue({
       ])
       return true
     },
+    getPrivateKey () {
+      let privateKey = localStorage.getItem('loom_pk')
+      if (!privateKey) {
+        privateKey = CryptoUtils.generatePrivateKey()
+        localStorage.setItem('loom_pk', JSON.stringify(Array.from(privateKey)))
+      } else {
+        privateKey = new Uint8Array(JSON.parse(privateKey))
+      }
+      return privateKey
+    },
     async getContract () {
       const web3 = new Web3(this.loomProvider)
       this.contract = new web3.eth.Contract(SimpleStoreJSON.abi, SimpleStoreJSON.networks[this.networkId].address)
@@ -138,7 +148,7 @@ var sample = new Vue({
     }
   },
   async mounted () {
-    const portis = new Portis('YOUR DAPP ID', 'rinkeby')
+    const portis = new Portis('2c275e48-a16c-43ff-9ca5-cc8fc045468a', 'rinkeby')
     await portis.showPortis()
     this.web3js = new Web3(portis.provider)
     await this.ethSigningDemo()
