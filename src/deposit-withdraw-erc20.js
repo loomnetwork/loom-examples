@@ -51,7 +51,7 @@ var sample = new Vue({
   },
   methods: {
     async init () {
-      const privateKey = CryptoUtils.generatePrivateKey()
+      const privateKey = this.getPrivateKey()
       this.publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
       this.client = new Client(
         this.chainId,
@@ -99,7 +99,16 @@ var sample = new Vue({
       ])
       return true
     },
-
+    getPrivateKey () {
+      let privateKey = localStorage.getItem('loom_pk')
+      if (!privateKey) {
+        privateKey = CryptoUtils.generatePrivateKey()
+        localStorage.setItem('loom_pk', JSON.stringify(Array.from(privateKey)))
+      } else {
+        privateKey = new Uint8Array(JSON.parse(privateKey))
+      }
+      return privateKey
+    },
     async mapContracts () {
       const foreignContract = new Address(
         'eth',

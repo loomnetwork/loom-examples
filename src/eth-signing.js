@@ -20,7 +20,7 @@ var sample = new Vue({
   el: '#counter',
   data: {
     counter: 0,
-    info: 'You will see a Metamask popup. Sign the transaction and wait a bit it gets initialized...',
+    info: 'You will see a Metamask popup. Sign the transaction and wait a bit until it gets initialized...',
     web3js: null,
     chainId: 'extdev-plasma-us1',
     writeUrl: 'wss://extdev-plasma-us1.dappchains.com/websocket',
@@ -46,7 +46,7 @@ var sample = new Vue({
   },
   methods: {
     async init () {
-      const privateKey = CryptoUtils.generatePrivateKey()
+      const privateKey = this.getPrivateKey()
       this.publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
       this.client = new Client(
         this.chainId,
@@ -94,7 +94,16 @@ var sample = new Vue({
       ])
       return true
     },
-
+    getPrivateKey () {
+      let privateKey = localStorage.getItem('loom_pk')
+      if (!privateKey) {
+        privateKey = CryptoUtils.generatePrivateKey()
+        localStorage.setItem('loom_pk', JSON.stringify(Array.from(privateKey)))
+      } else {
+        privateKey = new Uint8Array(JSON.parse(privateKey))
+      }
+      return privateKey
+    },
     async getContract () {
       const web3 = new Web3(this.loomProvider)
       this.contract = new web3.eth.Contract(SimpleStoreJSON.abi, SimpleStoreJSON.networks[this.networkId].address)

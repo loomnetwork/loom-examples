@@ -6,16 +6,23 @@
     <title> Universal Signing with Portis </title>
     <meta name="viewport" content="width=device-width,initial- scale=1">
     <link rel="shortcut icon" href="#" />
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue-router@3.0.6/dist/vue-router.min.js"></script>
-</head>
+    <!-- Load required Bootstrap and BootstrapVue CSS -->
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+
+    <!-- Load polyfills to support older browsers -->
+    <script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CMutationObserver" crossorigin="anonymous"></script>
+
+    <!-- Load Vue followed by BootstrapVue -->
+    <script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
+    <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
 <body>
 
     <div id="counter">
-        <p>Counter is: {{ counter }}.</p>
-        <button v-on:click.prevent="increment">+</button>
-        <button v-on:click.prevent="decrement">-</button>
-        <p>Info: {{ info }}.</p>
+        <b-alert variant="info" show>Counter is: {{ counter }}</b-alert>
+        <b-button variant="outline-primary"v-on:click.prevent="increment">+</b-button>
+        <b-button variant="outline-primary" v-on:click.prevent="decrement">-</b-button>
+        <b-alert variant="info" show>Info: {{ info }}.</b-alert>
     </div>
 
 </body>

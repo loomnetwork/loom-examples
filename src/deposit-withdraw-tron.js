@@ -31,7 +31,7 @@ var sample = new Vue({
   },
   methods: {
     async init () {
-      const privateKey = CryptoUtils.generatePrivateKey()
+      const privateKey = this.getPrivateKey()
       const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
       const loomAddress = LocalAddress.fromPublicKey(publicKey)
       this.loomAddressInHex = loomAddress.toString()
@@ -66,6 +66,16 @@ var sample = new Vue({
       } else {
         console.log('Address mapping already exists.')
       }
+    },
+    getPrivateKey () {
+      let privateKey = localStorage.getItem('loom_pk')
+      if (!privateKey) {
+        privateKey = CryptoUtils.generatePrivateKey()
+        localStorage.setItem('loom_pk', JSON.stringify(Array.from(privateKey)))
+      } else {
+        privateKey = new Uint8Array(JSON.parse(privateKey))
+      }
+      return privateKey
     },
     async getLoomTRXContract () {
       this.loomTRX = new this.loomWeb3.eth.Contract(erc20abi.abi, TRX_COIN_ADDRESS_HEX)
