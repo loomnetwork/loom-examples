@@ -3,3 +3,6 @@ truffle/loom_private_key
 rinkeby_account
 rinkeby_mnemonic
 rinkeby_private_key
+loom/loom_private_key
+loom/loom
+loom/loom_public_key

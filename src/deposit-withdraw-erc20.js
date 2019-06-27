@@ -109,43 +109,6 @@ var sample = new Vue({
       }
       return privateKey
     },
-    async mapContracts () {
-      const foreignContract = new Address(
-        'eth',
-        LocalAddress.fromHexString(this.mainNetCoinContractAddress)
-      )
-      const localContract = new Address(
-        this.chainId,
-        LocalAddress.fromHexString(this.loomCoinContractAddress)
-      )
-
-      const hash = this.web3js.utils.soliditySha3({
-        type: 'address',
-        value: foreignContract.local.toString().slice(2)
-      }, {
-        type: 'address',
-        value: localContract.local.toString().slice(2)
-      })
-
-      const txHash = MainNetCoinJSON.networks[this.rinkebyNetworkId].transactionHash
-      const web3Signer = new Web3Signer(this.web3js, this.ethAddress)
-      const creatorSig = await web3Signer.signAsync(hash)
-      let creatorTxHash = Buffer.from(txHash.slice(2), 'hex')
-      const userAddress = new Address(
-        this.chainId,
-        LocalAddress.fromHexString(this.loomAddress)
-      )
-      const gatewayContract = await Contracts.TransferGateway.createAsync(
-        this.client,
-        userAddress
-      )
-      await gatewayContract.addContractMappingAsync({
-        foreignContract,
-        localContract,
-        foreignContractCreatorSig: creatorSig,
-        foreignContractCreatorTxHash: creatorTxHash
-      })
-    },
 
     async getMainNeCoinContract () {
       this.mainNetCoinContractAddress = MainNetCoinJSON.networks[this.rinkebyNetworkId].address
@@ -293,7 +256,7 @@ var sample = new Vue({
 
     async refreshBalances () {
       this.info = 'Refreshing balances.'
-      this.info = 'MainNetCoin balance: ' + await this.getMainNetCoinBalance() + ', LoomCoin balance: ' + await this.getLoomCoinContractBalance()
+      this.info = 'MainNet balance: ' + await this.getMainNetCoinBalance() + ', Loom balance: ' + await this.getLoomCoinContractBalance()
     },
 
     async withdrawERC20 () {
@@ -313,6 +276,7 @@ var sample = new Vue({
         await this.getLoomCoinContract()
         await this.getMainNetGatewayContract()
         await this.refreshBalances()
+        await this.filterEvents()
       }
     },
 
@@ -324,6 +288,16 @@ var sample = new Vue({
       } else {
         alert('Metamask is not Enabled')
       }
+    },
+    async filterEvents () {
+      this.loomCoinContract.events.Transfer({ filter: { } }, async (err, event) => {
+        if (err) console.error('Error on event', err)
+        await this.refreshBalances()
+      })
+      this.mainNetCoinContract.events.Transfer({ filter: { } }, async (err, event) => {
+        if (err) console.error('Error on event', err)
+        await this.refreshBalances()
+      })
     }
   },
 

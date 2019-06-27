@@ -6,8 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development",
-    "migrate": " cd truffle && truffle migrate --network extdev",
-    "gen:loom-key": "mkdir loom && cd loom && curl https://raw.githubusercontent.com/loomnetwork/loom-sdk-documentation/master/scripts/get_loom.sh | sh && chmod +x ./loom && ./loom genkey --private_key loom_private_key --public_key loom_public_key && cp loom_private_key ../truffle/"
+    "migrate:loom": " cd truffle && truffle migrate --network extdev --reset -all",
+    "migrate:rinkeby": " cd truffle && truffle migrate --network rinkeby --reset -all",
+    "gen:loom-key": "mkdir loom && cd loom && curl https://raw.githubusercontent.com/loomnetwork/loom-sdk-documentation/master/scripts/get_loom.sh | sh && chmod +x ./loom && ./loom genkey --private_key loom_private_key --public_key loom_public_key && cp loom_private_key ../truffle/",
+    "gen:rinkeby-key": "node scripts/gen-eth-key.js rinkeby",
+    "map:contracts": "node scripts/map-contracts"
   },
   "keywords": [],
   "author": "",
@@ -37,8 +40,9 @@
   "dependencies": {
     "@portis/web3": "^2.0.0-beta.30",
     "babel-polyfill": "^6.26.0",
+    "bip39": "^2.5.0",
     "bn.js": "^4.11.8",
-    "ethereumjs-wallet": "^0.6.3",
+    "ethereumjs-wallet": "^0.6.2",
     "ethers": "^4.0.27",
     "fortmatic": "^0.7.4",
     "install": "^0.12.2",
