@@ -13,8 +13,10 @@ var sample = new Vue({
   },
   watch: {
     loomAddress: function () {
+      let tempAddress = this.loomAddress.slice(2, this.loomAddress.length)
+      tempAddress = 'loom'+tempAddress
       this.howToDeposit = 'Go to testnet.binance.org. Next, transfer some BNB to the Extdev hot wallet address: tbnb1gc7azhlup5a34t8us84x6d0fluw57deuf47q9w. \
-      Put your extdev address (' + this.loomAddress + ') in the memo field. \
+      Put your extdev address (' + tempAddress + ') in the memo field. \
       You extdev balance will get updated in a bit.'
     }
   },
