@@ -316,7 +316,7 @@
         "id": 122,
         "nodeType": "ImportDirective",
         "scope": 160,
-        "sourceUnit": 703,
+        "sourceUnit": 710,
         "src": "25:71:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -330,10 +330,10 @@
               "id": 123,
               "name": "StandardToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 702,
+              "referencedDeclaration": 709,
               "src": "124:13:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StandardToken_$702",
+                "typeIdentifier": "t_contract$_StandardToken_$709",
                 "typeString": "contract StandardToken"
               }
             },
@@ -343,10 +343,10 @@
           }
         ],
         "contractDependencies": [
-          380,
-          423,
-          455,
-          702
+          387,
+          430,
+          462,
+          709
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -354,10 +354,10 @@
         "id": 159,
         "linearizedBaseContracts": [
           159,
-          702,
-          380,
-          423,
-          455
+          709,
+          387,
+          430,
+          462
         ],
         "name": "MyMainNetCoin",
         "nodeType": "ContractDefinition",
@@ -554,7 +554,7 @@
                       "name": "totalSupply_",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 299,
+                      "referencedDeclaration": 306,
                       "src": "379:12:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -726,7 +726,7 @@
                         "name": "balances",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 297,
+                        "referencedDeclaration": 304,
                         "src": "446:8:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
@@ -742,7 +742,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 717,
+                          "referencedDeclaration": 724,
                           "src": "455:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -782,7 +782,7 @@
                       "name": "totalSupply_",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 299,
+                      "referencedDeclaration": 306,
                       "src": "469:12:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -861,7 +861,7 @@
         "id": 122,
         "nodeType": "ImportDirective",
         "scope": 160,
-        "sourceUnit": 703,
+        "sourceUnit": 710,
         "src": "25:71:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -875,10 +875,10 @@
               "id": 123,
               "name": "StandardToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 702,
+              "referencedDeclaration": 709,
               "src": "124:13:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StandardToken_$702",
+                "typeIdentifier": "t_contract$_StandardToken_$709",
                 "typeString": "contract StandardToken"
               }
             },
@@ -888,10 +888,10 @@
           }
         ],
         "contractDependencies": [
-          380,
-          423,
-          455,
-          702
+          387,
+          430,
+          462,
+          709
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -899,10 +899,10 @@
         "id": 159,
         "linearizedBaseContracts": [
           159,
-          702,
-          380,
-          423,
-          455
+          709,
+          387,
+          430,
+          462
         ],
         "name": "MyMainNetCoin",
         "nodeType": "ContractDefinition",
@@ -1099,7 +1099,7 @@
                       "name": "totalSupply_",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 299,
+                      "referencedDeclaration": 306,
                       "src": "379:12:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1271,7 +1271,7 @@
                         "name": "balances",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 297,
+                        "referencedDeclaration": 304,
                         "src": "446:8:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
@@ -1287,7 +1287,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 717,
+                          "referencedDeclaration": 724,
                           "src": "455:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -1327,7 +1327,7 @@
                       "name": "totalSupply_",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 299,
+                      "referencedDeclaration": 306,
                       "src": "469:12:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1393,7 +1393,7 @@
     }
   },
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-06-27T05:05:32.671Z",
+  "updatedAt": "2019-07-05T09:38:02.732Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

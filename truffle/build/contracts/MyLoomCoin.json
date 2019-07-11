@@ -335,7 +335,7 @@
         "id": 59,
         "nodeType": "ImportDirective",
         "scope": 120,
-        "sourceUnit": 703,
+        "sourceUnit": 710,
         "src": "25:71:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -349,10 +349,10 @@
               "id": 60,
               "name": "StandardToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 702,
+              "referencedDeclaration": 709,
               "src": "121:13:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StandardToken_$702",
+                "typeIdentifier": "t_contract$_StandardToken_$709",
                 "typeString": "contract StandardToken"
               }
             },
@@ -362,10 +362,10 @@
           }
         ],
         "contractDependencies": [
-          380,
-          423,
-          455,
-          702
+          387,
+          430,
+          462,
+          709
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -373,10 +373,10 @@
         "id": 119,
         "linearizedBaseContracts": [
           119,
-          702,
-          380,
-          423,
-          455
+          709,
+          387,
+          430,
+          462
         ],
         "name": "MyLoomCoin",
         "nodeType": "ContractDefinition",
@@ -602,7 +602,7 @@
                       "name": "totalSupply_",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 299,
+                      "referencedDeclaration": 306,
                       "src": "392:12:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -724,7 +724,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 717,
+                            "referencedDeclaration": 724,
                             "src": "587:3:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -800,10 +800,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        720,
-                        721
+                        727,
+                        728
                       ],
-                      "referencedDeclaration": 721,
+                      "referencedDeclaration": 728,
                       "src": "579:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -842,7 +842,7 @@
                       "name": "totalSupply_",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 299,
+                      "referencedDeclaration": 306,
                       "src": "658:12:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -881,7 +881,7 @@
                           "name": "totalSupply_",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 299,
+                          "referencedDeclaration": 306,
                           "src": "673:12:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -895,7 +895,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 283,
+                        "referencedDeclaration": 290,
                         "src": "673:16:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -942,7 +942,7 @@
                         "name": "balances",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 297,
+                        "referencedDeclaration": 304,
                         "src": "708:8:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
@@ -1008,7 +1008,7 @@
                             "name": "balances",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 297,
+                            "referencedDeclaration": 304,
                             "src": "728:8:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
@@ -1047,7 +1047,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 283,
+                        "referencedDeclaration": 290,
                         "src": "728:21:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -1167,7 +1167,7 @@
         "id": 59,
         "nodeType": "ImportDirective",
         "scope": 120,
-        "sourceUnit": 703,
+        "sourceUnit": 710,
         "src": "25:71:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1181,10 +1181,10 @@
               "id": 60,
               "name": "StandardToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 702,
+              "referencedDeclaration": 709,
               "src": "121:13:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StandardToken_$702",
+                "typeIdentifier": "t_contract$_StandardToken_$709",
                 "typeString": "contract StandardToken"
               }
             },
@@ -1194,10 +1194,10 @@
           }
         ],
         "contractDependencies": [
-          380,
-          423,
-          455,
-          702
+          387,
+          430,
+          462,
+          709
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -1205,10 +1205,10 @@
         "id": 119,
         "linearizedBaseContracts": [
           119,
-          702,
-          380,
-          423,
-          455
+          709,
+          387,
+          430,
+          462
         ],
         "name": "MyLoomCoin",
         "nodeType": "ContractDefinition",
@@ -1434,7 +1434,7 @@
                       "name": "totalSupply_",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 299,
+                      "referencedDeclaration": 306,
                       "src": "392:12:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1556,7 +1556,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 717,
+                            "referencedDeclaration": 724,
                             "src": "587:3:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -1632,10 +1632,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        720,
-                        721
+                        727,
+                        728
                       ],
-                      "referencedDeclaration": 721,
+                      "referencedDeclaration": 728,
                       "src": "579:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1674,7 +1674,7 @@
                       "name": "totalSupply_",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 299,
+                      "referencedDeclaration": 306,
                       "src": "658:12:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1713,7 +1713,7 @@
                           "name": "totalSupply_",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 299,
+                          "referencedDeclaration": 306,
                           "src": "673:12:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -1727,7 +1727,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 283,
+                        "referencedDeclaration": 290,
                         "src": "673:16:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -1774,7 +1774,7 @@
                         "name": "balances",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 297,
+                        "referencedDeclaration": 304,
                         "src": "708:8:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
@@ -1840,7 +1840,7 @@
                             "name": "balances",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 297,
+                            "referencedDeclaration": 304,
                             "src": "728:8:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
@@ -1879,7 +1879,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 283,
+                        "referencedDeclaration": 290,
                         "src": "728:21:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -1981,12 +1981,12 @@
     "9545242630824": {
       "events": {},
       "links": {},
-      "address": "0x9dADc3574A238cDFC130dB48bd5fcDBDa903AfDD",
-      "transactionHash": "0x083a38d10351e52296d859fdb683af434cb64c7483b1dee889ee5b3ecb724c30"
+      "address": "0xB9ed2863e1b295Cc09686949B2a1d4b74e47aCe3",
+      "transactionHash": "0xa65e6083247aed177ae64f40635cffba73bc3ef5d14ec673264be5d91804b395"
     }
   },
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-06-27T05:05:48.943Z",
+  "updatedAt": "2019-07-05T09:38:12.806Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
