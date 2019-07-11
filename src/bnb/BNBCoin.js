@@ -53,7 +53,7 @@ export default class BNBCoin {
     this.loomBNBContract = new this.web3.eth.Contract(bnbToken.abi, bnbCoinAddress)
   }
   async _filterEvents () {
-    this.loomBNBContract.events.Transfer({ filter: { } }, async (err, event) => {
+    this.loomBNBContract.events.Transfer({ filter: { address: this.loomUserAddress } }, async (err, event) => {
       if (err) console.error('Error on event', err)
       this._refreshBalance()
     })
