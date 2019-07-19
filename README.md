@@ -1,3 +1,7 @@
+# Loom Examples
+
+This repository holds a few example projects.
+
 ##  Universal Signing Demos
 
 The simple universal signing demos show how Loom universal signing works.
