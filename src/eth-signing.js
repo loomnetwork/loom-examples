@@ -135,7 +135,7 @@ var sample = new Vue({
     },
 
     async filterEvents () {
-      this.contract.events.NewValueSet({ filter: { } }, (err, event) => {
+      this.contract.events.NewValueSet({ filter: { address: this.loomAddress } }, (err, event) => {
         if (err) console.error('Error on event', err)
         else {
           if (event.returnValues._value.toString() === this.counter.toString()) {

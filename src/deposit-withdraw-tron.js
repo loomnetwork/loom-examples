@@ -216,7 +216,7 @@ var sample = new Vue({
       }
     },
     async filterEvents () {
-      this.loomTRX.events.Transfer({ filter: { } }, async (err, event) => {
+      this.loomTRX.events.Transfer({ filter: { address: this.loomAddressInHex } }, async (err, event) => {
         if (err) console.error('Error on event', err)
         await this.refreshBalance()
       })
