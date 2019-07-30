@@ -34,7 +34,8 @@ var sample = new Vue({
     loomProvider: null,
     contract: null,
     networkId: 9545242630824,
-    callerChainId: 'eth'
+    callerChainId: 'eth',
+    loomAddress: null
   },
   methods: {
     async init () {
@@ -128,7 +129,7 @@ var sample = new Vue({
       }
     },
     async filterEvents () {
-      this.contract.events.NewValueSet({ filter: { } }, (err, event) => {
+      this.contract.events.NewValueSet({ filter: { address: this.loomAddress } }, (err, event) => {
         if (err) console.error('Error on event', err)
         else {
           if (event.returnValues._value.toString() === this.counter.toString()) {

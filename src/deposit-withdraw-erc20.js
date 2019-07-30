@@ -290,11 +290,11 @@ var sample = new Vue({
       }
     },
     async filterEvents () {
-      this.loomCoinContract.events.Transfer({ filter: { } }, async (err, event) => {
+      this.loomCoinContract.events.Transfer({ filter: { address: this.loomAddress } }, async (err, event) => {
         if (err) console.error('Error on event', err)
         await this.refreshBalances()
       })
-      this.mainNetCoinContract.events.Transfer({ filter: { } }, async (err, event) => {
+      this.mainNetCoinContract.events.Transfer({ filter: { address: this.ethAddress } }, async (err, event) => {
         if (err) console.error('Error on event', err)
         await this.refreshBalances()
       })
