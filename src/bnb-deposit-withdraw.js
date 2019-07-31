@@ -9,12 +9,15 @@ var sample = new Vue({
     binanceAddress: null,
     loomAddress: null,
     howToDeposit: null,
-    withdrawMessage: 'Note: This will withdraw approx 0.12 BNB.'
+    value: 0,
+    max: 4,
+    label: null,
+    amountToWithdraw: null
   },
   watch: {
     loomAddress: function () {
       let tempAddress = this.loomAddress.slice(2, this.loomAddress.length)
-      tempAddress = 'loom'+tempAddress
+      tempAddress = 'loom' + tempAddress
       this.howToDeposit = 'Go to testnet.binance.org. Next, transfer some BNB to the Extdev hot wallet address: tbnb1gc7azhlup5a34t8us84x6d0fluw57deuf47q9w. \
       Put your extdev address (' + tempAddress + ') in the memo field. \
       You extdev balance will get updated in a bit.'
@@ -24,6 +27,8 @@ var sample = new Vue({
     async depositWithdrawBNBExample () {
       EventBus.$on('updateBalance', this.updateBalance)
       EventBus.$on('loomAddress', this.updateLoomAddress)
+      EventBus.$on('updateStatus', this.updateStatus)
+      EventBus.$emit('updateStatus', { currentStatus: 'waiting' })
       this.bnbCoin = new BNBCoin()
       this.bnbCoin.load()
     },
@@ -33,8 +38,21 @@ var sample = new Vue({
     updateLoomAddress (data) {
       this.loomAddress = data.loomAddress
     },
+    updateStatus (data) {
+      const currentStatus = data.currentStatus
+      const progress = {
+        'waiting': { 'value': 0, 'label': 'Waiting.' },
+        'approving': { 'value': 1, 'label': 'Approving.' },
+        'approved': { 'value': 2, 'label': 'Approved. Next -> Checking the allowance.' },
+        'allowanceChecked': { 'value': 3, 'label': 'Allowance checked. Next -> Withdrawing BNB' },
+        'withdrawn': { 'value': 4, 'label': 'Succesfully withdrawn!' }
+      }
+      this.value = progress[currentStatus]['value']
+      this.label = progress[currentStatus]['label']
+    },
     async withdrawBNB () {
-      await this.bnbCoin.withdrawBNB(this.binanceAddress)
+      await this.bnbCoin.withdrawBNB(this.binanceAddress, this.amountToWithdraw)
+
     }
   },
   async mounted () {

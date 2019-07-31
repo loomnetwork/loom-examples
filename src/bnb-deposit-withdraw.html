@@ -31,13 +31,22 @@
         </b-card>
 
         <b-card title="Withdaw to Binance" class="mb-2">
-            <input v-model="binanceAddress" placeholder="type your Binance address here">
-            <b-card-text>
-                {{withdrawMessage}}
-            </b-card-text>
+
+            Your Binance Address:
+            <input v-model="binanceAddress" class="mb-2">
+            <br>
+            Amount to Withdraw (excl. fee):
+            <input v-model="amountToWithdraw" placeholder="0.123" class="mb-2">
+
+            <b-progress :max="max" class="mb-2">
+                <b-progress-bar :value="value">
+                    {{label}}
+                </b-progress-bar>
+            </b-progress>
             <b-button variant="outline-primary" v-on:click.prevent="withdrawBNB">Withdraw BNB</b-button>
         </b-card>
     </div>
+
 
 </body>
 
