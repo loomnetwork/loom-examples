@@ -70,21 +70,27 @@ export default class BNBCoin {
       Address.fromString('extdev-plasma-us1:' + this.loomUserAddress)
     )
   }
-  async withdrawBNB (binanceAddress) {
-    const amountInt = 12300000
+  async withdrawBNB (binanceAddress, amountToWithdraw) {
+    const amountInt = parseFloat(amountToWithdraw) * 100000000
     const fee = 37500
     const loomBNBTransferGatewayAddress = '0xf801deec09eddf70b81e054c2241ece5f49edac2'
+    EventBus.$emit('updateStatus', { currentStatus: 'approving' })
     await this.loomBNBContract.methods.approve(loomBNBTransferGatewayAddress, amountInt + fee).send({ from: this.loomUserAddress })
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
     let approvedBalance = 0
+    EventBus.$emit('updateStatus', { currentStatus: 'approved' })
     while (approvedBalance == 0) {
       approvedBalance = await this.loomBNBContract.methods.allowance(this.loomUserAddress, loomBNBTransferGatewayAddress).call({ from: this.loomUserAddress })
       await delay(5000)
     }
+    EventBus.$emit('updateStatus', { currentStatus: 'allowanceChecked' })
     const bnbTokenAddress = Address.fromString('extdev-plasma-us1:' + this.loomBNBContract._address.toLowerCase())
     const tmp = this._decodeAddress(binanceAddress)
     const recipient = new Address('binance', new LocalAddress(tmp))
-    await this.loomBNBGateway.withdrawTokenAsync(new BN(amountInt - fee, 10), bnbTokenAddress, recipient)
+    await this.loomBNBGateway.withdrawTokenAsync(new BN(amountInt, 10), bnbTokenAddress, recipient)
+    EventBus.$emit('updateStatus', { currentStatus: 'withdrawn' })
+    await delay(1000)
+    EventBus.$emit('updateStatus', { currentStatus: 'waiting' })
   }
   _decodeAddress (value) {
     const decodeAddress = bech32.decode(value)
