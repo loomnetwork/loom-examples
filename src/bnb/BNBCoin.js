@@ -17,6 +17,7 @@ export default class BNBCoin {
     await this._getLoomBNBTransferGatewayContract()
     await this._filterEvents()
     await this._refreshBalance()
+    EventBus.$emit('updateStatus', { currentStatus: 'waiting' })
   }
 
   _createClient () {

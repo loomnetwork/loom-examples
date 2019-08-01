@@ -28,7 +28,6 @@ var sample = new Vue({
       EventBus.$on('updateBalance', this.updateBalance)
       EventBus.$on('loomAddress', this.updateLoomAddress)
       EventBus.$on('updateStatus', this.updateStatus)
-      EventBus.$emit('updateStatus', { currentStatus: 'waiting' })
       this.bnbCoin = new BNBCoin()
       this.bnbCoin.load()
     },
