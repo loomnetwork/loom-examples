@@ -51,8 +51,20 @@ var sample = new Vue({
       this.label = progress[currentStatus]['label']
     },
     async withdrawBNB () {
-      await this.bnbCoin.withdrawBNB(this.binanceAddress, this.amountToWithdraw)
-
+      if ((this.binanceAddress === null) || (this.binanceAddress.length === 0)) {
+        console.log('Binance Address should not be empty.')
+        return
+      }
+      if (this.amountToWithdraw === null) {
+        console.log('Amount should not be empty.')
+        return
+      }
+      const amount = this.amountToWithdraw.replace(',', '.')
+      if (isNaN(amount)) {
+        console.log('Amount to withdraw should be a valid number.')
+        return
+      }
+      await this.bnbCoin.withdrawBNB(this.binanceAddress, amount)
     }
   },
   async mounted () {
