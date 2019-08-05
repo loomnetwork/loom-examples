@@ -30,51 +30,36 @@ var sample = new Vue({
     ethAddress: null,
     client: null,
     loomProvider: null,
-    contract: null,
-    publicKey: null,
-    loomGatewayAddress: '0xE754d9518bF4a9C63476891eF9Aa7D91c8236a5d',
-    mainNetGatewayAddress: '0xb73C9506cb7f4139A4D6Ac81DF1e5b6756Fab7A2',
-    loomAddress: null,
-    rinkebyNetworkId: 4,
-    mainNetCoinContractAddress: null,
-    mainNetCoinContract: null,
-    mainNetCoinSymbol: null,
-    loomCoinContractAddress: null,
-    loomCoinContract: null,
-    mainNetGatewayContract: null,
-    web3loom: null
+    loomAddress: null
   },
   methods: {
     async init () {
-      const privateKey = this.getPrivateKey()
-      this.publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
       this.client = new Client(
         this.chainId,
         this.writeUrl,
         this.readUrl
       )
-      let provider = this.web3js.currentProvider
+      const provider = this.web3js.currentProvider
       provider.isMetaMask = true
       const ethersProvider = new ethers.providers.Web3Provider(provider)
       const signer = ethersProvider.getSigner()
       this.ethAddress = await signer.getAddress()
       const to = new Address('eth', LocalAddress.fromHexString(this.ethAddress))
-      const from = new Address(this.client.chainId, LocalAddress.fromPublicKey(this.publicKey))
+      const privateKey = CryptoUtils.generatePrivateKey()
+      const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
       this.client.txMiddleware = createDefaultTxMiddleware(this.client, privateKey)
       const addressMapper = await Contracts.AddressMapper.createAsync(
         this.client,
-        new Address(this.client.chainId, LocalAddress.fromPublicKey(this.publicKey))
+        new Address(this.client.chainId, LocalAddress.fromPublicKey(publicKey))
       )
       if (await addressMapper.hasMappingAsync(to)) {
+        console.log('Mapping already exists.')
         const mapping = await addressMapper.getMappingAsync(to)
-
-        if (mapping.to.local.toString() != from.local.toString()) {
-          console.log('Mapping mismatch. ' + mapping.from + ' is already mapped to ' + mapping.to)
-          return false
-        }
-        console.log(mapping.from + ' already mapped to ' + mapping.to)
+        console.log('mapping.to: ' + mapping.to.local.toString())
+        console.log('mapping.from: ' + mapping.from.local.toString())
         this.loomAddress = mapping.to.local.toString()
       } else {
+        const from = new Address(this.client.chainId, LocalAddress.fromPublicKey(publicKey))
         console.log('Mapping ' + from + ' and ' + to)
         const ethersSigner = new EthersSigner(signer)
         await addressMapper.addIdentityMappingAsync(from, to, ethersSigner)
@@ -93,16 +78,6 @@ var sample = new Vue({
         new SignedEthTxMiddleware(signer)
       ])
       return true
-    },
-    getPrivateKey () {
-      let privateKey = localStorage.getItem('loom_pk')
-      if (!privateKey) {
-        privateKey = CryptoUtils.generatePrivateKey()
-        localStorage.setItem('loom_pk', JSON.stringify(Array.from(privateKey)))
-      } else {
-        privateKey = new Uint8Array(JSON.parse(privateKey))
-      }
-      return privateKey
     },
     async getContract () {
       const web3 = new Web3(this.loomProvider)
@@ -135,7 +110,7 @@ var sample = new Vue({
     },
 
     async filterEvents () {
-      this.contract.events.NewValueSet({ filter: { address: this.loomAddress } }, (err, event) => {
+      this.contract.events.NewValueSet({ filter: { filter: { address: this.loomAddress } } }, (err, event) => {
         if (err) console.error('Error on event', err)
         else {
           if (event.returnValues._value.toString() === this.counter.toString()) {
