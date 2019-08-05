@@ -40,35 +40,32 @@ var sample = new Vue({
   },
   methods: {
     async init () {
-      const privateKey = this.getPrivateKey()
-      this.publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
       this.client = new Client(
         this.chainId,
         this.writeUrl,
         this.readUrl
       )
-      let provider = this.web3js.currentProvider
+      const provider = this.web3js.currentProvider
       provider.isMetaMask = true
-      const ethersProvider = await (new ethers.providers.Web3Provider(provider))
-      const signer = ethersProvider.getSigner(this.userAddress.toString())
+      const ethersProvider = new ethers.providers.Web3Provider(provider)
+      const signer = ethersProvider.getSigner()
       this.ethAddress = await signer.getAddress()
       const to = new Address('eth', LocalAddress.fromHexString(this.ethAddress))
-      const from = new Address(this.client.chainId, LocalAddress.fromPublicKey(this.publicKey))
+      const privateKey = CryptoUtils.generatePrivateKey()
+      const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
       this.client.txMiddleware = createDefaultTxMiddleware(this.client, privateKey)
       const addressMapper = await Contracts.AddressMapper.createAsync(
         this.client,
-        new Address(this.client.chainId, LocalAddress.fromPublicKey(this.publicKey))
+        new Address(this.client.chainId, LocalAddress.fromPublicKey(publicKey))
       )
       if (await addressMapper.hasMappingAsync(to)) {
+        console.log('Mapping already exists.')
         const mapping = await addressMapper.getMappingAsync(to)
-
-        if (mapping.to.local.toString() != from.local.toString()) {
-          console.log('Mapping mismatch. ' + mapping.from + ' is already mapped to ' + mapping.to)
-          return false
-        }
-        console.log(mapping.from + ' already mapped to ' + mapping.to)
+        console.log('mapping.to: ' + mapping.to.local.toString())
+        console.log('mapping.from: ' + mapping.from.local.toString())
         this.loomAddress = mapping.to.local.toString()
       } else {
+        const from = new Address(this.client.chainId, LocalAddress.fromPublicKey(publicKey))
         console.log('Mapping ' + from + ' and ' + to)
         const ethersSigner = new EthersSigner(signer)
         await addressMapper.addIdentityMappingAsync(from, to, ethersSigner)
@@ -79,7 +76,6 @@ var sample = new Vue({
       }
       this.loomProvider = new LoomProvider(this.client, privateKey)
       this.loomProvider.callerChainId = this.callerChainId
-
       this.loomProvider.setMiddlewaresForAddress(to.local.toString(), [
         new NonceTxMiddleware(
           new Address(this.callerChainId, LocalAddress.fromHexString(this.ethAddress)),
@@ -88,16 +84,6 @@ var sample = new Vue({
         new SignedEthTxMiddleware(signer)
       ])
       return true
-    },
-    getPrivateKey () {
-      let privateKey = localStorage.getItem('loom_pk_fortmatic_demo')
-      if (!privateKey) {
-        privateKey = CryptoUtils.generatePrivateKey()
-        localStorage.setItem('loom_pk_fortmatic_demo', JSON.stringify(Array.from(privateKey)))
-      } else {
-        privateKey = new Uint8Array(JSON.parse(privateKey))
-      }
-      return privateKey
     },
     async getContract () {
       const web3 = new Web3(this.loomProvider)
@@ -148,7 +134,7 @@ var sample = new Vue({
     }
   },
   async mounted () {
-    let fm = new Fortmatic('YOUR KEY', 'rinkeby')
+    const fm = new Fortmatic('pk_test_68B049DC42D74C1C', 'rinkeby')
     this.web3js = new Web3(fm.getProvider())
     this.userAddress = await this.web3js.currentProvider.enable()
     await this.ethSigningDemo()
