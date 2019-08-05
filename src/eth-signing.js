@@ -110,9 +110,10 @@ var sample = new Vue({
     },
 
     async filterEvents () {
-      this.contract.events.NewValueSet({ filter: { filter: { address: this.loomAddress } } }, (err, event) => {
-        if (err) console.error('Error on event', err)
-        else {
+      this.contract.events.NewValueSet({ filter: { address: this.loomAddress } }, (err, event) => {
+        if (err) {
+          console.error('Error on event', err)
+        } else {
           if (event.returnValues._value.toString() === this.counter.toString()) {
             this.info = 'Looking good! Expected: ' + this.counter.toString() + ', Returned: ' + event.returnValues._value.toString()
           } else {
