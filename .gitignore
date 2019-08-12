@@ -6,3 +6,6 @@ rinkeby_private_key
 loom/loom
 loom/loom_private_key
 loom/loom_public_key
+private-key.txt
+binance_keystore
+loom_private_key

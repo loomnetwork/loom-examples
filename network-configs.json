@@ -1,0 +1,23 @@
+{
+  "networks": {
+    "asia1" : {
+      "chainId": "asia1",
+      "networkId": "5101040124304",
+      "writeUrl" : "wss://test-z-asia1.dappchains.com/websocket",
+      "readUrl" : "wss://test-z-asia1.dappchains.com/queryws",
+      "bnbCoinAddress" : "0xb6f5558ed8fd604dcda28514c4fb39af935c48e9",
+      "binanceTransferGatewayAddress" : "0x166e1C5Bf627DFCbDDbcF1cc3b848813a9FC1446",
+      "hotWalletAddress": "tbnb14sa7gnlalxd0e336clc0ltgke6e6hdanyl6pqq"
+    },
+    "extdev": {
+      "chainId" : "extdev-plasma-us1",
+      "networkId": "9545242630824",
+      "writeUrl" : "wss://extdev-plasma-us1.dappchains.com/websocket",
+      "readUrl" : "wss://extdev-plasma-us1.dappchains.com/queryws",
+      "bnbCoinAddress" : "0x9ab4e22d56c0c4f7d494442714c82a605d2f28e0",
+      "binanceTransferGatewayAddress": "0xf801deec09eddf70b81e054c2241ece5f49edac2",
+      "extdev2RinkebyGatewayAddress": "0xE754d9518bF4a9C63476891eF9Aa7D91c8236a5d",
+      "rinkeby2ExtdevGatewayAddress": "0xb73C9506cb7f4139A4D6Ac81DF1e5b6756Fab7A2"
+    }
+  }
+}

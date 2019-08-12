@@ -17,6 +17,16 @@ module.exports = {
       },
       network_id: '9545242630824'
     },
+    asia1: {
+      provider: function () {
+        const privateKey = readFileSync(path.join(__dirname, 'loom_private_key'), 'utf-8')
+        const chainId = 'asia1'
+        const writeUrl = 'wss://test-z-asia1.dappchains.com/websocket'
+        const readUrl = 'wss://test-z-asia1.dappchains.com/queryws'
+        return new LoomTruffleProvider(chainId, writeUrl, readUrl, privateKey)
+      },
+      network_id: '5101040124304'
+    },
     rinkeby: {
       provider: function () {
         const mnemonic = readFileSync(path.join(__dirname, '../rinkeby_mnemonic'), 'utf-8')
