@@ -8,9 +8,12 @@
     "start": "webpack-dev-server --mode development",
     "migrate:loom": " cd truffle && truffle migrate --network extdev --reset -all",
     "migrate:rinkeby": " cd truffle && truffle migrate --network rinkeby --reset -all",
-    "gen:loom-key": "mkdir loom && cd loom && curl https://raw.githubusercontent.com/loomnetwork/loom-sdk-documentation/master/scripts/get_loom.sh | sh && chmod +x ./loom && ./loom genkey --private_key loom_private_key --public_key loom_public_key && cp loom_private_key ../truffle/",
+    "gen:loom-key": "node scripts/gen-loom-key.js",
     "gen:rinkeby-key": "node scripts/gen-eth-key.js rinkeby",
-    "map:contracts": "node scripts/map-contracts"
+    "map:contracts": "node scripts/map-contracts",
+    "map:binance-contracts": "node scripts/map-binance-contracts",
+    "get:binance-private-key" : "node scripts/get-pk-from-keystore binance/binance_keystore",
+    "migrate:sample-bep2-token": "cd truffle && truffle deploy --network extdev --from 5 --to 5 --reset"
   },
   "keywords": [],
   "author": "",
@@ -48,7 +51,7 @@
     "ethers": "^4.0.27",
     "fortmatic": "^0.7.4",
     "install": "^0.12.2",
-    "loom-js": "^1.57.1",
+    "loom-js": "^1.58.0",
     "loom-truffle-provider": "^0.13.0",
     "npm": "^6.9.0",
     "openzeppelin-solidity": "^1.12.0",

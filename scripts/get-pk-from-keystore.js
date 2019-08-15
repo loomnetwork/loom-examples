@@ -35,11 +35,11 @@ const getPassword = new Promise(function(resolve, reject) {
   };
 });
 
-getPassword.then((password) => { 
+getPassword.then((password) => {
   readFile(path, "utf-8", (err, keyData) => {
     const keyStore = JSON.parse(keyData)
     const privateKey = sdk.crypto.getPrivateKeyFromKeyStore(keyStore, password)
-    writeFileSync("./private-key.txt", privateKey)
+    writeFileSync("./binance/private-key.txt", privateKey)
     console.log("\nExported private key to private-key.txt")
   })
 })

@@ -1981,12 +1981,12 @@
     "9545242630824": {
       "events": {},
       "links": {},
-      "address": "0xB9ed2863e1b295Cc09686949B2a1d4b74e47aCe3",
-      "transactionHash": "0xa65e6083247aed177ae64f40635cffba73bc3ef5d14ec673264be5d91804b395"
+      "address": "0x259a6FA5d6ECF6afEc663a560912874DF5737623",
+      "transactionHash": "0x0bdb8af488b5beefd8bba1a860f060dae15ba39c5bded507daf6cfdcee62c0fd"
     }
   },
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-07-31T06:37:36.309Z",
+  "updatedAt": "2019-08-13T19:29:21.551Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

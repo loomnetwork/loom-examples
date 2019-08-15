@@ -1,5 +1,5 @@
 import BEP2Coin from './bep2/BEP2Coin'
-import AsiaBNBCoin from './AsiaBNBCoin/AsiaBNBCoin'
+import BNBCoin from './bnb/BNBCoin'
 import { EventBus } from './EventBus/EventBus'
 
 var sample = new Vue({
@@ -8,7 +8,7 @@ var sample = new Vue({
     bep2Balance: 'Wait a bit until it gets initialized...',
     bnbBalance: 'Wait a bit until it gets initialized...',
     bep2Coin: null,
-    asiaBNBCoin: null,
+    bnbCoin: null,
     bep2LoomAddress: 'Wait a bit until it gets initialized...',
     binanceAddress: null,
     value: 0,
@@ -23,8 +23,8 @@ var sample = new Vue({
       EventBus.$on('updateStatus', this.updateStatus)
       this.bep2Coin = new BEP2Coin()
       this.bep2Coin.load()
-      this.asiaBNBCoin = new AsiaBNBCoin()
-      this.asiaBNBCoin.load()
+      this.bnbCoin = new BNBCoin()
+      this.bnbCoin.load()
     },
     updateBep2LoomAddress (data) {
       let tempAddress = data.loomAddress.slice(2, data.loomAddress.length)
@@ -59,8 +59,8 @@ var sample = new Vue({
         return
       }
       const amountToWithdraw = 5
-      console.log('Withdrawing ' + amountToWithdraw + ' to ' + this.binanceAddress)
-      await this.asiaBNBCoin.approveFee()
+      console.log('Withdrawing ' + amountToWithdraw + ' tokens to ' + this.binanceAddress)
+      await this.bnbCoin.approveFee()
       console.log('Approved the transfer gateway to take the fee.')
       await this.bep2Coin.withdrawBEP2(this.binanceAddress, amountToWithdraw)
       console.log('Tokens withdrawn.')

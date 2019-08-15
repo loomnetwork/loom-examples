@@ -25,7 +25,7 @@ var sample = new Vue({
   },
   methods: {
     async depositWithdrawBNBExample () {
-      EventBus.$on('updateBalance', this.updateBalance)
+      EventBus.$on('updateBNBBalance', this.updateBalance)
       EventBus.$on('loomAddress', this.updateLoomAddress)
       EventBus.$on('updateStatus', this.updateStatus)
       this.bnbCoin = new BNBCoin()

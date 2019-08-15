@@ -1023,8 +1023,8 @@
     "9545242630824": {
       "events": {},
       "links": {},
-      "address": "0x113613002E02363bdA0487E6c168babFE7b6746F",
-      "transactionHash": "0xa781455a7377895aca2f22bf9daf9457f2aa018c0acc62a2a9e8382efb9daf46"
+      "address": "0x886860308588AF7955a560E08262A39373873Be9",
+      "transactionHash": "0xa11426e44487571966949eec5400fb9bb43bbe191359c0a798c6fe7b59af8798"
     },
     "5101040124304": {
       "events": {},
@@ -1034,7 +1034,7 @@
     }
   },
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-07-31T06:37:49.639Z",
+  "updatedAt": "2019-08-13T19:29:27.900Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
