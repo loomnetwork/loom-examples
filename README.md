@@ -83,3 +83,13 @@ npm run start
 ```
 
 Open [http://localhost:8080/](http://localhost:8080/) in your favorite browser.
+
+
+## BNB Demo
+
+Follow the instruction from the [Deposit and Withdraw BNB](https://loomx.io/developers/en/deposit-and-withdraw-bnb.html) page.
+
+
+## BEP2 Demo
+
+See  [Deposit and Withdraw BEP2](https://loomx.io/developers/en/deposit-and-withdraw-bep2.html) page for instructions on how to run this demo.
