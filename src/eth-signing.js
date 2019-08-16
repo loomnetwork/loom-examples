@@ -29,7 +29,8 @@ var sample = new Vue({
     callerChainId: 'eth',
     ethAddress: null,
     client: null,
-    loomProvider: null
+    loomProvider: null,
+    loomAddress: null
   },
   methods: {
     async init () {
@@ -56,6 +57,7 @@ var sample = new Vue({
         const mapping = await addressMapper.getMappingAsync(to)
         console.log('mapping.to: ' + mapping.to.local.toString())
         console.log('mapping.from: ' + mapping.from.local.toString())
+        this.loomAddress = mapping.to.local.toString()
       } else {
         const from = new Address(this.client.chainId, LocalAddress.fromPublicKey(publicKey))
         console.log('Mapping ' + from + ' and ' + to)
@@ -107,9 +109,10 @@ var sample = new Vue({
     },
 
     async filterEvents () {
-      this.contract.events.NewValueSet({ filter: { } }, (err, event) => {
-        if (err) console.error('Error on event', err)
-        else {
+      this.contract.events.NewValueSet({ filter: { address: this.loomAddress } }, (err, event) => {
+        if (err) {
+          console.error('Error on event', err)
+        } else {
           if (event.returnValues._value.toString() === this.counter.toString()) {
             this.info = 'Looking good! Expected: ' + this.counter.toString() + ', Returned: ' + event.returnValues._value.toString()
           } else {

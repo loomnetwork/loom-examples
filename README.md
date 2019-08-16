@@ -1,3 +1,7 @@
+# Loom Examples
+
+This repository holds a few example projects.
+
 ##  Universal Signing Demos
 
 The simple universal signing demos show how Loom universal signing works.
@@ -92,4 +96,5 @@ Follow the instruction from the [Deposit and Withdraw BNB](https://loomx.io/deve
 
 ## BEP2 Demo
 
-See  [Deposit and Withdraw BEP2](https://loomx.io/developers/en/deposit-and-withdraw-bep2.html) page for instructions on how to run this demo.
+See the [Deposit and Withdraw BEP2](https://loomx.io/developers/en/deposit-and-withdraw-bep2.html) page for instructions on how to run this demo.
+
