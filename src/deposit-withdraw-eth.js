@@ -44,7 +44,7 @@ var sample = new Vue({
       this.loomEthCoinDemo.withdrawEth()
     },
     async resumeWithdrawal () {
-
+      this.loomEthCoinDemo.resumeWithdrawal()
     },
     async loadWeb3 () {
       if (window.web3) {

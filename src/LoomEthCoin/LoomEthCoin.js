@@ -53,8 +53,10 @@ export default class LoomEthCoin {
     let accountMapping = await this._loadMapping(callerAddress, client)
     if (accountMapping === null) {
       console.log('Create a new mapping')
-      await this._createNewMapping(web3js.currentProvider)
-      accountMapping = await this.plasma_loadMapping(callerAddress, client)
+      const signer = getMetamaskSigner(web3js.currentProvider)
+      await this._createNewMapping(signer)
+      accountMapping = await this._loadMapping(callerAddress, client)
+      console.log(accountMapping)
     } else {
       console.log('mapping already exists')
     }
@@ -120,43 +122,32 @@ export default class LoomEthCoin {
     return client
   }
   
-  async createNewMapping(signer) {
+  async _createNewMapping (signer) {
+    const ethereumAccount = await signer.getAddress()
+    const ethereumAddress = Address.fromString(`eth:${ethereumAccount}`)
+    const plasmaEthSigner = new EthersSigner(signer)
+    const privateKey = CryptoUtils.generatePrivateKey()
+    const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
+    const client = this._createClient()
+    client.txMiddleware = createDefaultTxMiddleware(client, privateKey)
+    const loomAddress = new Address(client.chainId, LocalAddress.fromPublicKey(publicKey))
 
-    // const ethereumAccount = await signer.getAddress()
-    // const ethereumAddress = Address.fromString(`eth:${ethereumAccount}`)
-
-    // // wrap the eth signer in a loom-js signer
-    // const plasmaEthSigner = new EthersSigner(signer)
-    // // create a new plasma account
-    // const plasmaId = generateNewId()
-
-    // // create a client and connect with this plasma account
-    // // use the newly created plasma key as the caller
-    // const { client } = createDefaultClient(
-    //     CryptoUtils.Uint8ArrayToB64(plasmaId.privateKey),
-    //     config.plasma.endpoint,
-    //     config.plasma.chainId,
-    // )
-
-    // const mapper = await AddressMapper.createAsync(client, plasmaId.address)
-    // try {
-    //     await mapper.addIdentityMappingAsync(
-    //         ethereumAddress,
-    //         plasmaId.address,
-    //         plasmaEthSigner,
-    //     )
-    //     // disconnect the temporary client we used to create the mappiing
-    //     client.disconnect()
-    // } catch (e) {
-    //     if (e.message.includes("identity mapping already exists")) {
-    //         // should handle the error and just retry loading the mapping
-    //     } else {
-    //         console.error(e)
-    //     }
-    //     client.disconnect()
-    //     return false
-
-    // }
+    const mapper = await AddressMapper.createAsync(client, loomAddress)
+    try {
+      await mapper.addIdentityMappingAsync(
+        ethereumAddress,
+        loomAddress,
+        plasmaEthSigner
+      )
+      client.disconnect()
+    } catch (e) {
+      if (e.message.includes('identity mapping already exists')) {
+      } else {
+        console.error(e)
+      }
+      client.disconnect()
+      return false
+    }
   }
 
   async _getContracts (client, web3, accountMapping) {
@@ -172,7 +163,7 @@ export default class LoomEthCoin {
     console.log('Initialized ethCoin')
     this.loomGatewayContract = await Contracts.TransferGateway.createAsync(
       client,
-      accountMapping.plasma
+      accountMapping.ethereum
     )
     console.log('Initialized loomGatewayContract')
   }
@@ -203,7 +194,7 @@ export default class LoomEthCoin {
 
   async _transferEthToLoomGateway () {
     console.log('transfer eth to loom gateway')
-    const ownerAddr = this.accountMapping.plasma
+    const ownerAddr = this.accountMapping.ethereum
     const loomGatewayAddr = Address.fromString(`extdev-plasma-us1:${this._loomGatewayAddress()}`)
     const timeout = 60 * 1000
     const receiveSignedWithdrawalEvent = new Promise((resolve, reject) => {
@@ -226,6 +217,8 @@ export default class LoomEthCoin {
     })
     const amount = this._amountToDeposit()
     console.log('before withdrawEthAsync')
+    console.log(loomGatewayAddr.toString())
+    console.log(ownerAddr.toString())
     await this.loomGatewayContract.withdrawETHAsync(new BN(amount), loomGatewayAddr, ownerAddr)
     console.log(`${amount.toString()} wei deposited to DAppChain Gateway...`)
     await receiveSignedWithdrawalEvent
@@ -246,7 +239,8 @@ export default class LoomEthCoin {
     }
   }
 
-  async withdrawEthFromMainNetGateway (amount, data) {
+  async _withdrawEthFromMainNetGateway (amount, data) {
+    console.log('withdrawing from mainnet gateway')
     const gas = this._gas()
     const gatewayContract = this.mainNetGatewayContract
     const ethereumAddress = this.accountMapping.ethereum.toString()
@@ -264,9 +258,18 @@ export default class LoomEthCoin {
   async withdrawEth () {
     await this._approveGatewayToTakeEth()
     await this._transferEthToLoomGateway()
-    const data = await this.getWithdrawalReceipt()
+    const data = await this._getWithdrawalReceipt()
     if (data !== undefined) {
       const amount = this._amountToWithdraw()
+      await this._withdrawEthFromMainNetGateway(amount, data)
+    }
+  }
+
+  async resumeWithdrawal () {
+    const amount = this._amountToDeposit()
+    const data = await this._getWithdrawalReceipt()
+    console.log('data: ' + data)
+    if (data !== undefined) {
       await this._withdrawEthFromMainNetGateway(amount, data)
     }
   }
