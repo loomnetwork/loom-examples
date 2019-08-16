@@ -41,18 +41,18 @@ function getBinancePrivateKey () {
   return privateKeyStr
 }
 
-function getBinanceTokenName () {
-  const binanceTokenName = fs.readFileSync(path.join(__dirname, '../binance/binance-token-name.txt'), 'utf-8')
-  return binanceTokenName
+function getBinanceTokenSymbol () {
+  const binanceTokenSymbol = fs.readFileSync(path.join(__dirname, '../binance/binance-token-symbol.txt'), 'utf-8')
+  return binanceTokenSymbol
 }
 
-async function addContractMapping (client, signer, tokenExtdevAddress, ownerExtdevAddress, binanceTokenName) {
+async function addContractMapping (client, signer, tokenExtdevAddress, ownerExtdevAddress, binanceTokenSymbol) {
   console.log('tokenExtdevAddress: ' + tokenExtdevAddress)
   console.log('ownerExtdevAddress: ' + ownerExtdevAddress)
-  console.log('binanceTokenName: ' + binanceTokenName)
+  console.log('binanceTokenSymbol: ' + binanceTokenSymbol)
   const ownerExtdevAddr = Address.fromString(`${client.chainId}:${ownerExtdevAddress}`)
   const gatewayContract = await BinanceTransferGateway.createAsync(client, ownerExtdevAddr)
-  const binanceTokenAddress = ethers.utils.hexZeroPad('0x' + Buffer.from(binanceTokenName, 'utf8').toString('hex'), 20)
+  const binanceTokenAddress = ethers.utils.hexZeroPad('0x' + Buffer.from(binanceTokenSymbol, 'utf8').toString('hex'), 20)
   const msg = binanceTokenAddress + tokenExtdevAddress.slice(2)
   const foreignContractCreatorSig = await signer.signAsync(msg)
   const localContract = Address.fromString(`${client.chainId}:${tokenExtdevAddress}`)
@@ -78,10 +78,10 @@ async function mapContracts () {
   const binancePrivateKey = getBinancePrivateKey()
   console.log('binancePrivateKey:' + binancePrivateKey)
   const signer = new BinanceSigner(binancePrivateKey)
-  const binanceTokenName = getBinanceTokenName()
+  const binanceTokenSymbol = getBinanceTokenSymbol()
   const extdevNetworkId = await extdev.web3js.eth.net.getId()
   const tokenExtdevAddress = bep2Token.networks[extdevNetworkId].address
-  await addContractMapping(client, signer, tokenExtdevAddress, extdev.account, binanceTokenName)
+  await addContractMapping(client, signer, tokenExtdevAddress, extdev.account, binanceTokenSymbol)
   client.disconnect()
 }
 
