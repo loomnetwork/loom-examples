@@ -24,11 +24,11 @@ const EthCoin = Contracts.EthCoin
 
 export default class LoomEthCoin {
   _amountToWithdraw () {
-    return 50000
+    return 500000
   }
 
   _amountToDeposit () {
-    return 500000
+    return 5000000
   }
 
   _gas () {
@@ -60,10 +60,12 @@ export default class LoomEthCoin {
     } else {
       console.log('mapping already exists')
     }
+    console.log('mapping.ethereum: ' + accountMapping.ethereum.toString())
+    console.log('mapping.plasma: ' + accountMapping.plasma.toString())
     this.accountMapping = accountMapping
     this.web3js = web3js
-    this._getContracts(client, web3, accountMapping)
-    this._updateBalances()
+    await this._getContracts(client, web3, accountMapping)
+    await this._updateBalances()
   }
 
   async _loadMapping (ethereumAccount, client) {
@@ -187,7 +189,7 @@ export default class LoomEthCoin {
 
   async _approveGatewayToTakeEth () {
     console.log('Approving the gateway to take the eth')
-    const totalAmount = this._amountToDeposit() + this._gas()
+    const totalAmount = this._amountToWithdraw() + this._gas()
     const gatewayAddress = Address.fromString('extdev-plasma-us1:' + this._loomGatewayAddress())
     await this.ethCoin.approveAsync(gatewayAddress, new BN(totalAmount))
   }
@@ -215,7 +217,7 @@ export default class LoomEthCoin {
       }
       this.loomGatewayContract.on(Contracts.TransferGateway.EVENT_TOKEN_WITHDRAWAL, listener)
     })
-    const amount = this._amountToDeposit()
+    const amount = this._amountToWithdraw()
     console.log('before withdrawEthAsync')
     console.log(loomGatewayAddr.toString())
     console.log(ownerAddr.toString())
@@ -232,6 +234,8 @@ export default class LoomEthCoin {
       return null
     }
     const signature = CryptoUtils.bytesToHexAddr(data.oracleSignature)
+    console.log('amount: ' + data.value.toString(10))
+    console.log('tokenContract: ' + data.tokenContract.local.toString())
     return {
       signature: signature,
       amount: data.value.toString(10),
@@ -243,7 +247,7 @@ export default class LoomEthCoin {
     console.log('withdrawing from mainnet gateway')
     const gas = this._gas()
     const gatewayContract = this.mainNetGatewayContract
-    const ethereumAddress = this.accountMapping.ethereum.toString()
+    const ethereumAddress = this.accountMapping.ethereum.local.toString()
     const gasEstimate = gatewayContract.methods
       .withdrawETH(amount.toString(), data.signature)
       .estimateGas({ from: ethereumAddress, gas })
@@ -266,7 +270,7 @@ export default class LoomEthCoin {
   }
 
   async resumeWithdrawal () {
-    const amount = this._amountToDeposit()
+    const amount = this._amountToWithdraw()
     const data = await this._getWithdrawalReceipt()
     console.log('data: ' + data)
     if (data !== undefined) {
