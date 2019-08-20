@@ -245,18 +245,15 @@ export default class LoomEthCoin {
 
   async _withdrawEthFromMainNetGateway (amount, data) {
     console.log('withdrawing from mainnet gateway')
-    const gas = this._gas()
+    console.log('amount: ' + data.amount)
+    console.log('data.signature: ' + data.signature)
     const gatewayContract = this.mainNetGatewayContract
     const ethereumAddress = this.accountMapping.ethereum.local.toString()
-    const gasEstimate = gatewayContract.methods
-      .withdrawETH(amount.toString(), data.signature)
-      .estimateGas({ from: ethereumAddress, gas })
-    if (gasEstimate == gas) {
-      throw new Error('Not enough enough gas, send more.')
-    }
-    return gatewayContract.methods
+    console.log('ethereumAddress: ' + ethereumAddress)
+    const tx = await gatewayContract.methods
       .withdrawETH(amount.toString(), data.signature)
       .send({ from: ethereumAddress })
+    console.log(tx)
   }
 
   async withdrawEth () {
