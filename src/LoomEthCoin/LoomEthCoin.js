@@ -243,7 +243,7 @@ export default class LoomEthCoin {
     }
   }
 
-  async _withdrawEthFromMainNetGateway (amount, data) {
+  async _withdrawEthFromMainNetGateway (data) {
     console.log('withdrawing from mainnet gateway')
     console.log('amount: ' + data.amount)
     console.log('data.signature: ' + data.signature)
@@ -251,7 +251,7 @@ export default class LoomEthCoin {
     const ethereumAddress = this.accountMapping.ethereum.local.toString()
     console.log('ethereumAddress: ' + ethereumAddress)
     const tx = await gatewayContract.methods
-      .withdrawETH(amount.toString(), data.signature)
+      .withdrawETH(data.amount.toString(), data.signature)
       .send({ from: ethereumAddress })
     console.log(tx)
   }
@@ -261,17 +261,15 @@ export default class LoomEthCoin {
     await this._transferEthToLoomGateway()
     const data = await this._getWithdrawalReceipt()
     if (data !== undefined) {
-      const amount = this._amountToWithdraw()
-      await this._withdrawEthFromMainNetGateway(amount, data)
+      await this._withdrawEthFromMainNetGateway(data)
     }
   }
 
   async resumeWithdrawal () {
-    const amount = this._amountToWithdraw()
     const data = await this._getWithdrawalReceipt()
     console.log('data: ' + data)
     if (data !== undefined) {
-      await this._withdrawEthFromMainNetGateway(amount, data)
+      await this._withdrawEthFromMainNetGateway(data)
     }
   }
 
