@@ -59,7 +59,7 @@ export default class LoomEthCoin {
     console.log('mapping.plasma: ' + accountMapping.plasma.toString())
     this.accountMapping = accountMapping
     this.web3js = web3js
-    await this._getContracts(client, web3, accountMapping)
+    await this._getContracts(client, accountMapping)
     await this._updateBalances()
   }
 
@@ -147,8 +147,8 @@ export default class LoomEthCoin {
     }
   }
 
-  async _getContracts (client, web3, accountMapping) {
-    this.mainNetGatewayContract = await new web3.eth.Contract(
+  async _getContracts (client, accountMapping) {
+    this.mainNetGatewayContract = await new this.web3js.eth.Contract(
       GatewayJSON.abi,
       this._RinkebyGatewayAddress()
     )
@@ -181,7 +181,6 @@ export default class LoomEthCoin {
   async _approveGatewayToTakeEth () {
     console.log('Approving the gateway to take the eth')
     const totalAmount = this._amountToWithdraw() + this._gas()
-    console.log('this.loomGatewayContract.address: ' + this.loomGatewayContract.address)
     const gatewayAddress = Address.fromString(this.loomGatewayContract.address.toString())
     await this.ethCoin.approveAsync(gatewayAddress, new BN(totalAmount))
   }
@@ -189,7 +188,6 @@ export default class LoomEthCoin {
   async _transferEthToLoomGateway () {
     console.log('transfer eth to loom gateway')
     const ownerAddr = this.accountMapping.ethereum
-    console.log('this.loomGatewayContract.address: ' + this.loomGatewayContract.address)
     const loomGatewayAddr = Address.fromString(this.loomGatewayContract.address.toString())
     const rinkebyGatewayAddr = Address.fromString(`eth:${this._RinkebyGatewayAddress().toString()}`)
     const timeout = 60 * 1000
@@ -199,10 +197,6 @@ export default class LoomEthCoin {
         timeout
       )
       const listener = event => {
-        console.log('event.tokenContract.toString(): ' + event.tokenContract.toString())
-        console.log('rinkebyGatewayAddr.toString(): ' + rinkebyGatewayAddr.toString())
-        console.log('event.tokenOwner.toString(): ' + event.tokenOwner.toString())
-        console.log('ownerAddr.toString(): ' + ownerAddr.toString())
         if (
           event.tokenContract.toString() === rinkebyGatewayAddr.toString() &&
           event.tokenOwner.toString() === ownerAddr.toString()
@@ -216,11 +210,7 @@ export default class LoomEthCoin {
       this.loomGatewayContract.on(Contracts.TransferGateway.EVENT_TOKEN_WITHDRAWAL, listener)
     })
     const amount = this._amountToWithdraw()
-    console.log('before withdrawEthAsync')
-    console.log(loomGatewayAddr.toString())
-    console.log(ownerAddr.toString())
     const rinkebyGatewayAddress = Address.fromString(`eth:${this._RinkebyGatewayAddress()}`)
-    console.log(rinkebyGatewayAddress)
     await this.loomGatewayContract.withdrawETHAsync(new BN(amount), rinkebyGatewayAddress, ownerAddr)
     console.log(`${amount.toString()} wei deposited to DAppChain Gateway...`)
     await receiveSignedWithdrawalEvent
@@ -235,8 +225,6 @@ export default class LoomEthCoin {
       return null
     }
     const signature = CryptoUtils.bytesToHexAddr(data.oracleSignature)
-    console.log('amount: ' + data.value.toString(10))
-    console.log('tokenContract: ' + data.tokenContract.local.toString())
     return {
       signature: signature,
       amount: data.value.toString(10),
@@ -246,11 +234,16 @@ export default class LoomEthCoin {
 
   async _withdrawEthFromMainNetGateway (data) {
     console.log('withdrawing from mainnet gateway')
-    console.log('amount: ' + data.amount)
-    console.log('data.signature: ' + data.signature)
     const gatewayContract = this.mainNetGatewayContract
     const ethereumAddress = this.accountMapping.ethereum.local.toString()
-    console.log('ethereumAddress: ' + ethereumAddress)
+    const gas = this._gas()
+    const gasEstimate = await gatewayContract.methods
+      .withdrawETH(data.amount.toString(), data.signature)
+      .estimateGas({ from: ethereumAddress, gas })
+
+    if (gasEstimate == gas) {
+      throw new Error('Not enough enough gas, send more.')
+    }
     const tx = await gatewayContract.methods
       .withdrawETH(data.amount.toString(), data.signature)
       .send({ from: ethereumAddress })
@@ -268,7 +261,6 @@ export default class LoomEthCoin {
 
   async resumeWithdrawal () {
     const data = await this._getWithdrawalReceipt()
-    console.log('data: ' + data)
     if (data !== undefined) {
       await this._withdrawEthFromMainNetGateway(data)
     }
