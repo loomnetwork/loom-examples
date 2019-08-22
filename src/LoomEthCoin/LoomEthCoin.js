@@ -153,21 +153,17 @@ export default class LoomEthCoin {
       GatewayJSON.abi,
       this._RinkebyGatewayAddress()
     )
-    console.log('Initialized mainNetGatewayContract')
     this.ethCoin = await EthCoin.createAsync(
       client,
       accountMapping.ethereum
     )
-    console.log('Initialized ethCoin')
     this.loomGatewayContract = await Contracts.TransferGateway.createAsync(
       client,
       accountMapping.ethereum
     )
-    console.log('Initialized loomGatewayContract')
   }
 
   async depositEth () {
-    console.log('deposit eth')
     const ethereumAddress = this.accountMapping.ethereum.local.toString()
     const gasPrice = this.web3js.utils.toHex(10e9)
     try {
@@ -204,7 +200,7 @@ export default class LoomEthCoin {
       )
       const listener = event => {
         if (
-          event.tokenContract.toString() === loomGatewayAddr.toString() &&
+          event.tokenContract.toString() === this._RinkebyGatewayAddress().toString() &&
           event.tokenOwner.toString() === ownerAddr.toString()
         ) {
           clearTimeout(timer)
