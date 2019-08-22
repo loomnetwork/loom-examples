@@ -1,5 +1,5 @@
 import BNBCoin from './bnb/BNBCoin'
-import { EventBus } from './bnb/EventBus.js'
+import { EventBus } from './EventBus/EventBus.js'
 
 var sample = new Vue({
   el: '#bnb-deposit-withdraw',
@@ -25,7 +25,7 @@ var sample = new Vue({
   },
   methods: {
     async depositWithdrawBNBExample () {
-      EventBus.$on('updateBalance', this.updateBalance)
+      EventBus.$on('updateBNBBalance', this.updateBalance)
       EventBus.$on('loomAddress', this.updateLoomAddress)
       EventBus.$on('updateStatus', this.updateStatus)
       this.bnbCoin = new BNBCoin()

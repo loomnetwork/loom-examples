@@ -66,7 +66,6 @@ var sample = new Vue({
         const mapping = await addressMapper.getMappingAsync(to)
         console.log('mapping.to: ' + mapping.to.local.toString())
         console.log('mapping.from: ' + mapping.from.local.toString())
-        this.loomAddress = mapping.to.local.toString()
       }
       this.loomProvider = new LoomProvider(this.client, privateKey)
       this.loomProvider.callerChainId = this.callerChainId

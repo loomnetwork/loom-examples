@@ -6,7 +6,8 @@ rinkeby_private_key
 loom/loom
 loom/loom_private_key
 loom/loom_public_key
-binance/binance-token-name.txt
-binance/binance_keystore
-binance/private-key.txt
+private-key.txt
+binance_keystore
 loom_private_key
+binance/binance-token-name.txt
+binance/binance-token-symbol.txt

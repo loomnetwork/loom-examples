@@ -91,16 +91,10 @@ Open [http://localhost:8080/](http://localhost:8080/) in your favorite browser.
 
 ## BNB Demo
 
-### Install
+Follow the instruction from the [Deposit and Withdraw BNB](https://loomx.io/developers/en/deposit-and-withdraw-bnb.html) page.
 
-```bash
-npm install
-```
 
-### Start the web server
+## BEP2 Demo
 
-```bash
-npm run start
-```
+See the [Deposit and Withdraw BEP2](https://loomx.io/developers/en/deposit-and-withdraw-bep2.html) page for instructions on how to run this demo.
 
-Open [http://localhost:8080/](http://localhost:8080/) in your favorite browser.
