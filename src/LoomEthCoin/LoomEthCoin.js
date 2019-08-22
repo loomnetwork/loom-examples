@@ -1,4 +1,3 @@
-import { ethers } from 'ethers'
 import GatewayJSON from '../../truffle/build/contracts/Gateway.json'
 import {
   NonceTxMiddleware,
@@ -11,7 +10,7 @@ import {
   Contracts,
   EthersSigner,
   createDefaultTxMiddleware,
-  getMetamaskSigner,
+  getMetamaskSigner
 } from 'loom-js'
 
 import { AddressMapper } from 'loom-js/dist/contracts'
@@ -192,7 +191,8 @@ export default class LoomEthCoin {
     const ownerAddr = this.accountMapping.ethereum
     console.log('this.loomGatewayContract.address: ' + this.loomGatewayContract.address)
     const loomGatewayAddr = Address.fromString(this.loomGatewayContract.address.toString())
-    const timeout = 60 * 1500
+    const rinkebyGatewayAddr = Address.fromString(`eth:${this._RinkebyGatewayAddress().toString()}`)
+    const timeout = 60 * 1000
     const receiveSignedWithdrawalEvent = new Promise((resolve, reject) => {
       let timer = setTimeout(
         () => reject(new Error('Timeout while waiting for withdrawal to be signed')),
@@ -200,12 +200,12 @@ export default class LoomEthCoin {
       )
       const listener = event => {
         console.log('event.tokenContract.toString(): ' + event.tokenContract.toString())
-        console.log('this._RinkebyGatewayAddress().toString(): ' + this._RinkebyGatewayAddress().toString())
+        console.log('rinkebyGatewayAddr.toString(): ' + rinkebyGatewayAddr.toString())
         console.log('event.tokenOwner.toString(): ' + event.tokenOwner.toString())
         console.log('ownerAddr.toString(): ' + ownerAddr.toString())
         if (
-          event.tokenContract.toString() == this._RinkebyGatewayAddress().toString() &&
-          event.tokenOwner.toString() == ownerAddr.toString()
+          event.tokenContract.toString() === rinkebyGatewayAddr.toString() &&
+          event.tokenOwner.toString() === ownerAddr.toString()
         ) {
           clearTimeout(timer)
           timer = null
