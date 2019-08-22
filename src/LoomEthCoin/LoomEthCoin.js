@@ -186,14 +186,16 @@ export default class LoomEthCoin {
   async _approveGatewayToTakeEth () {
     console.log('Approving the gateway to take the eth')
     const totalAmount = this._amountToWithdraw() + this._gas()
-    const gatewayAddress = Address.fromString('extdev-plasma-us1:' + this.this.loomGatewayContract.address)
+    console.log('this.loomGatewayContract.address: ' + this.loomGatewayContract.address)
+    const gatewayAddress = Address.fromString(this.loomGatewayContract.address.toString())
     await this.ethCoin.approveAsync(gatewayAddress, new BN(totalAmount))
   }
 
   async _transferEthToLoomGateway () {
     console.log('transfer eth to loom gateway')
     const ownerAddr = this.accountMapping.ethereum
-    const loomGatewayAddr = Address.fromString(`extdev-plasma-us1:${this.this.loomGatewayContract.address}`)
+    console.log('this.loomGatewayContract.address: ' + this.loomGatewayContract.address)
+    const loomGatewayAddr = Address.fromString(this.loomGatewayContract.address.toString())
     const timeout = 60 * 1000
     const receiveSignedWithdrawalEvent = new Promise((resolve, reject) => {
       let timer = setTimeout(
@@ -217,7 +219,9 @@ export default class LoomEthCoin {
     console.log('before withdrawEthAsync')
     console.log(loomGatewayAddr.toString())
     console.log(ownerAddr.toString())
-    await this.loomGatewayContract.withdrawETHAsync(new BN(amount), loomGatewayAddr, ownerAddr)
+    const rinkebyGatewayAddress = Address.fromString(`eth:${this._RinkebyGatewayAddress()}`)
+    console.log(rinkebyGatewayAddress)
+    await this.loomGatewayContract.withdrawETHAsync(new BN(amount), rinkebyGatewayAddress, ownerAddr)
     console.log(`${amount.toString()} wei deposited to DAppChain Gateway...`)
     await receiveSignedWithdrawalEvent
   }
