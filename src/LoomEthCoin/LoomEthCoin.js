@@ -230,6 +230,7 @@ export default class LoomEthCoin {
     const userLocalAddr = this.accountMapping.plasma
     const gatewayContract = this.loomGatewayContract
     const data = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
+    console.log('data:', data)
     if (!data) {
       return null
     }
