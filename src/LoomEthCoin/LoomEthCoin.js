@@ -36,7 +36,7 @@ export default class LoomEthCoin {
   }
 
   _RinkebyGatewayAddress () {
-    return '0xb73C9506cb7f4139A4D6Ac81DF1e5b6756Fab7A2'
+    return '0xb73C9506cb7f4139A4D6Ac81DF1e5b6756Fab7A2'.toLowerCase()
   }
 
   async load (web3js) {
@@ -192,16 +192,20 @@ export default class LoomEthCoin {
     const ownerAddr = this.accountMapping.ethereum
     console.log('this.loomGatewayContract.address: ' + this.loomGatewayContract.address)
     const loomGatewayAddr = Address.fromString(this.loomGatewayContract.address.toString())
-    const timeout = 60 * 1000
+    const timeout = 60 * 1500
     const receiveSignedWithdrawalEvent = new Promise((resolve, reject) => {
       let timer = setTimeout(
         () => reject(new Error('Timeout while waiting for withdrawal to be signed')),
         timeout
       )
       const listener = event => {
+        console.log('event.tokenContract.toString(): ' + event.tokenContract.toString())
+        console.log('this._RinkebyGatewayAddress().toString(): ' + this._RinkebyGatewayAddress().toString())
+        console.log('event.tokenOwner.toString(): ' + event.tokenOwner.toString())
+        console.log('ownerAddr.toString(): ' + ownerAddr.toString())
         if (
-          event.tokenContract.toString() === this._RinkebyGatewayAddress().toString() &&
-          event.tokenOwner.toString() === ownerAddr.toString()
+          event.tokenContract.toString() == this._RinkebyGatewayAddress().toString() &&
+          event.tokenOwner.toString() == ownerAddr.toString()
         ) {
           clearTimeout(timer)
           timer = null
