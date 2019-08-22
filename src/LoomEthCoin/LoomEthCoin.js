@@ -35,11 +35,7 @@ export default class LoomEthCoin {
     return 350000
   }
 
-  _loomGatewayAddress () {
-    return '0xE754d9518bF4a9C63476891eF9Aa7D91c8236a5d'
-  }
-
-  _mainNetGatewayAddress () {
+  _RinkebyGatewayAddress () {
     return '0xb73C9506cb7f4139A4D6Ac81DF1e5b6756Fab7A2'
   }
 
@@ -155,7 +151,7 @@ export default class LoomEthCoin {
   async _getContracts (client, web3, accountMapping) {
     this.mainNetGatewayContract = await new web3.eth.Contract(
       GatewayJSON.abi,
-      this._mainNetGatewayAddress()
+      this._RinkebyGatewayAddress()
     )
     console.log('Initialized mainNetGatewayContract')
     this.ethCoin = await EthCoin.createAsync(
@@ -177,7 +173,7 @@ export default class LoomEthCoin {
     try {
       await this.web3js.eth.sendTransaction({
         from: ethereumAddress,
-        to: this._mainNetGatewayAddress(),
+        to: this._RinkebyGatewayAddress(),
         value: this._amountToDeposit(),
         gasLimit: this._gas(),
         gasPrice: gasPrice
@@ -190,14 +186,14 @@ export default class LoomEthCoin {
   async _approveGatewayToTakeEth () {
     console.log('Approving the gateway to take the eth')
     const totalAmount = this._amountToWithdraw() + this._gas()
-    const gatewayAddress = Address.fromString('extdev-plasma-us1:' + this._loomGatewayAddress())
+    const gatewayAddress = Address.fromString('extdev-plasma-us1:' + this.this.loomGatewayContract.address)
     await this.ethCoin.approveAsync(gatewayAddress, new BN(totalAmount))
   }
 
   async _transferEthToLoomGateway () {
     console.log('transfer eth to loom gateway')
     const ownerAddr = this.accountMapping.ethereum
-    const loomGatewayAddr = Address.fromString(`extdev-plasma-us1:${this._loomGatewayAddress()}`)
+    const loomGatewayAddr = Address.fromString(`extdev-plasma-us1:${this.this.loomGatewayContract.address}`)
     const timeout = 60 * 1000
     const receiveSignedWithdrawalEvent = new Promise((resolve, reject) => {
       let timer = setTimeout(
