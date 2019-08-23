@@ -24,14 +24,16 @@ export default class EthSigning {
     this.extdevConfig = networkConfigs.networks['extdev']
     const client = this._createClient()
     client.on('error', console.error)
-    const callerAddress = await this._setupSigner(client, web3js.currentProvider)
+    const ethProvider = web3js.currentProvider
+    ethProvider.isMetaMask = true
+    const callerAddress = await this._setupSigner(client, ethProvider)
     console.log('callerAddress: ' + callerAddress)
     const loomProvider = await this._createLoomProvider(client, callerAddress)
     const web3 = new Web3(loomProvider)
     let accountMapping = await this._loadMapping(callerAddress, client)
     if (accountMapping === null) {
       console.log('Create a new mapping')
-      const signer = getMetamaskSigner(web3js.currentProvider)
+      const signer = getMetamaskSigner(ethProvider)
       await this._createNewMapping(signer)
       accountMapping = await this._loadMapping(callerAddress, client)
       console.log(accountMapping)
