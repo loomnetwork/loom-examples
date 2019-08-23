@@ -99,9 +99,9 @@ export default class EthSigning {
   }
 
   _createClient () {
-    const chainId = 'extdev-plasma-us1'
-    const writeUrl = 'wss://extdev-plasma-us1.dappchains.com/websocket'
-    const readUrl = 'wss://extdev-plasma-us1.dappchains.com/queryws'
+    const chainId = this.extdevConfig['chainId']
+    const writeUrl = this.extdevConfig['writeUrl']
+    const readUrl = this.extdevConfig['readUrl']
     const client = new Client(chainId, writeUrl, readUrl)
     return client
   }
