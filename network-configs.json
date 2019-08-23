@@ -19,6 +19,9 @@
       "extdev2RinkebyGatewayAddress": "0xE754d9518bF4a9C63476891eF9Aa7D91c8236a5d",
       "rinkeby2ExtdevGatewayAddress": "0xb73C9506cb7f4139A4D6Ac81DF1e5b6756Fab7A2",
       "hotWalletAddress": "tbnb1gc7azhlup5a34t8us84x6d0fluw57deuf47q9w"
+    },
+    "rinkeby": {
+      "networkId": "4"
     }
   }
 }

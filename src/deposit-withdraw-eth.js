@@ -1,24 +1,7 @@
-import { ethers } from "ethers";
-import GatewayJSON from "../truffle/build/contracts/Gateway.json";
-import {
-  NonceTxMiddleware,
-  SignedEthTxMiddleware,
-  CryptoUtils,
-  Client,
-  LoomProvider,
-  Address,
-  LocalAddress,
-  Contracts,
-  EthersSigner,
-  createDefaultTxMiddleware
-} from "loom-js";
-
 import LoomEthCoin  from './LoomEthCoin/LoomEthCoin'
 import { EventBus } from './LoomEthCoin/EventBus'
 
 const Web3 = require("web3");
-const BN = require("bn.js");
-const EthCoin = Contracts.EthCoin;
 
 var sample = new Vue({
   el: "#eth-deposit-withdraw",
