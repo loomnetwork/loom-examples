@@ -1388,12 +1388,12 @@
     "4": {
       "events": {},
       "links": {},
-      "address": "0x65237Bd989880c95a7D9b4C8b96424bb71be35F2",
-      "transactionHash": "0x79773f12e668583ab89a0d83bf89eff41e98d5a5d7f4d9adf41bef3ee7d65be7"
+      "address": "0x6db9fF5Ea0995e7D1bf3D1009D1f556601187Bc1",
+      "transactionHash": "0x56e9209e908c7bbd634d1fcddaaaba4edbb7715df880cc2a29ad48b3d7672b01"
     }
   },
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-08-13T19:30:19.369Z",
+  "updatedAt": "2019-08-23T07:41:28.565Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

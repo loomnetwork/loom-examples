@@ -6263,7 +6263,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-08-12T09:36:14.163Z",
+  "updatedAt": "2019-08-23T05:50:16.239Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
