@@ -1,6 +1,7 @@
 import BEP2Coin from './bep2/BEP2Coin'
 import BNBCoin from './bnb/BNBCoin'
 import { EventBus } from './EventBus/EventBus'
+const Web3 = require('web3')
 
 var sample = new Vue({
   el: '#bep2-deposit-withdraw',
@@ -22,9 +23,9 @@ var sample = new Vue({
       EventBus.$on('updateBep2LoomAddress', this.updateBep2LoomAddress)
       EventBus.$on('updateStatus', this.updateStatus)
       this.bep2Coin = new BEP2Coin()
-      this.bep2Coin.load()
+      this.bep2Coin.load(this.web3js)
       this.bnbCoin = new BNBCoin()
-      this.bnbCoin.load()
+      this.bnbCoin.load(this.web3js)
     },
     updateBep2LoomAddress (data) {
       let tempAddress = data.loomAddress.slice(2, data.loomAddress.length)
@@ -64,9 +65,19 @@ var sample = new Vue({
       console.log('Approved the transfer gateway to take the fee.')
       await this.bep2Coin.withdrawBEP2(this.binanceAddress, amountToWithdraw)
       console.log('Tokens withdrawn.')
+    },
+    async loadWeb3 () {
+      if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider)
+        this.web3js = new Web3(window.web3.currentProvider)
+        await ethereum.enable()
+      } else {
+        alert('Metamask is not Enabled')
+      }
     }
   },
   async mounted () {
+    await this.loadWeb3()
     await this.depositWithdrawBEP2Example()
   }
 })

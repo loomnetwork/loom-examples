@@ -1,5 +1,6 @@
 import BNBCoin from './bnb/BNBCoin'
 import { EventBus } from './EventBus/EventBus.js'
+const Web3 = require('web3')
 
 var sample = new Vue({
   el: '#bnb-deposit-withdraw',
@@ -29,7 +30,7 @@ var sample = new Vue({
       EventBus.$on('loomAddress', this.updateLoomAddress)
       EventBus.$on('updateStatus', this.updateStatus)
       this.bnbCoin = new BNBCoin()
-      this.bnbCoin.load()
+      this.bnbCoin.load(this.web3js)
     },
     updateBalance (data) {
       this.bnbBalance = 'BNB Balance: ' + data.newBalance
@@ -64,9 +65,19 @@ var sample = new Vue({
         return
       }
       await this.bnbCoin.withdrawBNB(this.binanceAddress, amount)
+    },
+    async loadWeb3 () {
+      if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider)
+        this.web3js = new Web3(window.web3.currentProvider)
+        await ethereum.enable()
+      } else {
+        alert('Metamask is not Enabled')
+      }
     }
   },
   async mounted () {
+    await this.loadWeb3()
     await this.depositWithdrawBNBExample()
   }
 })

@@ -15,7 +15,7 @@ import {
 
 import { AddressMapper } from 'loom-js/dist/contracts'
 
-import { EventBus } from './EventBus'
+import { EventBus } from '../EventBus/EventBus'
 
 const Web3 = require('web3')
 const BN = require('bn.js')
@@ -269,7 +269,7 @@ export default class LoomEthCoin {
   async _updateBalances () {
     const mainNetBalance = await this._getMainNetBalance()
     const loomBalance = await this._getLoomBalance()
-    EventBus.$emit('updateBalances', { mainNetBalance: mainNetBalance, loomBalance: loomBalance })
+    EventBus.$emit('updateEthBalance', { mainNetBalance: mainNetBalance, loomBalance: loomBalance })
   }
 
   async _getMainNetBalance () {

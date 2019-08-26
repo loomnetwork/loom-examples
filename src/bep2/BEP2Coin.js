@@ -1,5 +1,5 @@
 import {
-  Client, LocalAddress, CryptoUtils, LoomProvider, Address, createDefaultTxMiddleware
+  Client, LocalAddress, CryptoUtils, LoomProvider, Address, createDefaultTxMiddleware, getMetamaskSigner, NonceTxMiddleware, SignedEthTxMiddleware
 } from 'loom-js'
 import BN from 'bn.js'
 import Web3 from 'web3'
@@ -8,14 +8,35 @@ import { BinanceTransferGateway } from 'loom-js/dist/contracts'
 import bech32 from 'bech32'
 import { EventBus } from '../EventBus/EventBus'
 import networkConfigs from '../../network-configs.json'
+import { AddressMapper } from 'loom-js/dist/contracts'
 
 export default class BEP2Coin {
-  async load () {
+  async load (web3js) {
     this.currentNetwork = 'extdev'
     this.networkConfig = networkConfigs.networks[this.currentNetwork]
-    this._createClient()
+    const client = this._createClient()
+    client.on('error', console.error)
+    const callerAddress = await this._setupSigner(client, web3js.currentProvider)
+    console.log('callerAddress: ' + callerAddress)
+    const loomProvider = await this._createLoomProvider(client, callerAddress)
+    const web3 = new Web3(loomProvider)
+    let accountMapping = await this._loadMapping(callerAddress, client)
+    if (accountMapping === null) {
+      console.log('Create a new mapping')
+      const signer = getMetamaskSigner(web3js.currentProvider)
+      await this._createNewMapping(signer)
+      accountMapping = await this._loadMapping(callerAddress, client)
+      console.log(accountMapping)
+    } else {
+      console.log('mapping already exists')
+    }
+    console.log('mapping.ethereum: ' + accountMapping.ethereum.toString())
+    console.log('mapping.plasma: ' + accountMapping.plasma.toString())
+    this.accountMapping = accountMapping
+    this.web3js = web3js
+    this.web3 = web3
+    this.client = client
     this._getLoomUserAddress()
-    this._getWeb3Instance()
     this._getLoomBEP2Contract()
     await this._getLoomBEP2TransferGatewayContract()
     await this._filterEvents()
@@ -23,34 +44,93 @@ export default class BEP2Coin {
     EventBus.$emit('updateStatus', { currentStatus: 'waiting' })
   }
 
-  _createClient () {
-    this.privateKey = this._getPrivateKey()
-    this.publicKey = CryptoUtils.publicKeyFromPrivateKey(this.privateKey)
-    this.client = new Client(this.networkConfig['chainId'], this.networkConfig['writeUrl'], this.networkConfig['readUrl'])
-    this.client.on('error', msg => {
-      console.error('Error connecting to extdev.', msg)
-    })
-    this.client.txMiddleware = createDefaultTxMiddleware(this.client, this.privateKey)
+  async _createLoomProvider (client, callerAddress) {
+    const dummyKey = CryptoUtils.generatePrivateKey()
+    const publicKey = CryptoUtils.publicKeyFromPrivateKey(dummyKey)
+    const dummyAccount = LocalAddress.fromPublicKey(publicKey).toString()
+    const loomProvider = new LoomProvider(
+      client,
+      dummyKey,
+      () => client.txMiddleware
+    )
+    loomProvider.setMiddlewaresForAddress(callerAddress.local.toString(), client.txMiddleware)
+    loomProvider.callerChainId = callerAddress.chainId
+    // remove dummy account
+    loomProvider.accounts.delete(dummyAccount)
+    loomProvider._accountMiddlewares.delete(dummyAccount)
+    return loomProvider
   }
 
-  _getPrivateKey () {
-    let privateKey = localStorage.getItem('loom_binance_pk')
-    if (!privateKey) {
-      privateKey = CryptoUtils.generatePrivateKey()
-      localStorage.setItem('loom_binance_pk', JSON.stringify(Array.from(privateKey)))
-    } else {
-      privateKey = new Uint8Array(JSON.parse(privateKey))
+  async _setupSigner (plasmaClient, provider) {
+    const signer = getMetamaskSigner(provider)
+    const ethAddress = await signer.getAddress()
+    const callerAddress = new Address('eth', LocalAddress.fromHexString(ethAddress))
+
+    plasmaClient.txMiddleware = [
+      new NonceTxMiddleware(callerAddress, plasmaClient),
+      new SignedEthTxMiddleware(signer)
+    ]
+
+    return callerAddress
+  }
+
+  async _loadMapping (ethereumAccount, client) {
+    const mapper = await AddressMapper.createAsync(client, ethereumAccount)
+    let accountMapping = { ethereum: null, plasma: null }
+    try {
+      const mapping = await mapper.getMappingAsync(ethereumAccount)
+      accountMapping = {
+        ethereum: mapping.from,
+        plasma: mapping.to
+      }
+    } catch (error) {
+      console.error(error)
+      accountMapping = null
+    } finally {
+      mapper.removeAllListeners()
     }
-    return privateKey
+    return accountMapping
+  }
+
+  async _createNewMapping (signer) {
+    const ethereumAccount = await signer.getAddress()
+    const ethereumAddress = Address.fromString(`eth:${ethereumAccount}`)
+    const plasmaEthSigner = new EthersSigner(signer)
+    const privateKey = CryptoUtils.generatePrivateKey()
+    const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
+    const client = this._createClient()
+    client.txMiddleware = createDefaultTxMiddleware(client, privateKey)
+    const loomAddress = new Address(client.chainId, LocalAddress.fromPublicKey(publicKey))
+
+    const mapper = await AddressMapper.createAsync(client, loomAddress)
+    try {
+      await mapper.addIdentityMappingAsync(
+        ethereumAddress,
+        loomAddress,
+        plasmaEthSigner
+      )
+      client.disconnect()
+    } catch (e) {
+      if (e.message.includes('identity mapping already exists')) {
+      } else {
+        console.error(e)
+      }
+      client.disconnect()
+      return false
+    }
+  }
+
+  _createClient () {
+    const chainId = 'extdev-plasma-us1'
+    const writeUrl = 'wss://extdev-plasma-us1.dappchains.com/websocket'
+    const readUrl = 'wss://extdev-plasma-us1.dappchains.com/queryws'
+    const client = new Client(chainId, writeUrl, readUrl)
+    return client
   }
 
   _getLoomUserAddress () {
-    this.loomUserAddress = LocalAddress.fromPublicKey(this.publicKey).toString()
+    this.loomUserAddress = this.accountMapping.plasma.local.toString()
     EventBus.$emit('updateBep2LoomAddress', { loomAddress: this.loomUserAddress })
-  }
-
-  _getWeb3Instance () {
-    this.web3 = new Web3(new LoomProvider(this.client, this.privateKey))
   }
 
   _getLoomBEP2Contract () {
@@ -67,7 +147,7 @@ export default class BEP2Coin {
   }
 
   async _refreshBalance () {
-    this.bep2Balance = await this.loomBEP2Contract.methods.balanceOf(this.loomUserAddress).call({ from: this.loomUserAddress })
+    this.bep2Balance = await this.loomBEP2Contract.methods.balanceOf(this.loomUserAddress).call({ from: this.accountMapping.ethereum.local.toString() })
     this.bep2Balance = this.bep2Balance / 100000000
     EventBus.$emit('updateBEP2Balance', { newBalance: this.bep2Balance })
   }
@@ -75,7 +155,7 @@ export default class BEP2Coin {
   async _getLoomBEP2TransferGatewayContract () {
     this.loomBEP2Gateway = await BinanceTransferGateway.createAsync(
       this.client,
-      Address.fromString('extdev-plasma-us1:' + this.loomUserAddress)
+      this.accountMapping.ethereum
     )
   }
 
@@ -88,12 +168,12 @@ export default class BEP2Coin {
     const amountInt = amountToWithdraw * 100000000
     EventBus.$emit('updateStatus', { currentStatus: 'bep2Approving' })
     const binanceTransferGatewayAddress = await this._getBinanceTransferGatewayAddress()
-    await this.loomBEP2Contract.methods.approve(binanceTransferGatewayAddress, amountInt).send({ from: this.loomUserAddress })
+    await this.loomBEP2Contract.methods.approve(binanceTransferGatewayAddress, amountInt).send({ from: this.accountMapping.ethereum.local.toString() })
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
     let approvedBalance = 0
     EventBus.$emit('updateStatus', { currentStatus: 'bep2Approved' })
     while (approvedBalance == 0) {
-      approvedBalance = await this.loomBEP2Contract.methods.allowance(this.loomUserAddress, binanceTransferGatewayAddress).call({ from: this.loomUserAddress })
+      approvedBalance = await this.loomBEP2Contract.methods.allowance(this.loomUserAddress, binanceTransferGatewayAddress).call({ from: this.accountMapping.ethereum.local.toString() })
       await delay(5000)
     }
     EventBus.$emit('updateStatus', { currentStatus: 'bep2AllowanceChecked' })

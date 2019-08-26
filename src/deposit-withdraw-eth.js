@@ -1,5 +1,5 @@
 import LoomEthCoin  from './LoomEthCoin/LoomEthCoin'
-import { EventBus } from './LoomEthCoin/EventBus'
+import { EventBus } from './EventBus/EventBus'
 
 const Web3 = require("web3");
 
@@ -12,7 +12,7 @@ var sample = new Vue({
   },
   methods: {
     async depositAndWithdrawEthersDemo () {
-      EventBus.$on('updateBalances', this.updateBalance)
+      EventBus.$on('updateEthBalance', this.updateBalance)
       this.loomEthCoinDemo = new LoomEthCoin()
       this.loomEthCoinDemo.load(this.web3js)
     },
