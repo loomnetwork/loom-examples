@@ -1,5 +1,5 @@
 import {
-  Client, LocalAddress, CryptoUtils, LoomProvider, Address, createDefaultTxMiddleware, getMetamaskSigner, NonceTxMiddleware, SignedEthTxMiddleware
+  Client, LocalAddress, CryptoUtils, LoomProvider, Address, createDefaultTxMiddleware, getMetamaskSigner, NonceTxMiddleware, SignedEthTxMiddleware, EthersSigner
 } from 'loom-js'
 import BN from 'bn.js'
 import Web3 from 'web3'

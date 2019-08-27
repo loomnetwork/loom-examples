@@ -7,7 +7,8 @@ import {
   createDefaultTxMiddleware,
   NonceTxMiddleware,
   SignedEthTxMiddleware,
-  getMetamaskSigner
+  getMetamaskSigner,
+  EthersSigner
 } from 'loom-js'
 import BN from 'bn.js'
 import Web3 from 'web3'
