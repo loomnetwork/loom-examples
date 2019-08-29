@@ -273,7 +273,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 13,
-        "sourceUnit": 1010,
+        "sourceUnit": 1015,
         "src": "25:63:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -287,10 +287,10 @@
               "id": 3,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1009,
+              "referencedDeclaration": 1014,
               "src": "240:5:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$1009",
+                "typeIdentifier": "t_contract$_ERC20_$1014",
                 "typeString": "contract ERC20"
               }
             },
@@ -300,8 +300,8 @@
           }
         ],
         "contractDependencies": [
-          1009,
-          1106
+          1014,
+          1111
         ],
         "contractKind": "contract",
         "documentation": "@title ERC20 interface for token contracts deployed to mainnet that let Ethereum Gateway mint the token.",
@@ -309,8 +309,8 @@
         "id": 12,
         "linearizedBaseContracts": [
           12,
-          1009,
-          1106
+          1014,
+          1111
         ],
         "name": "IERC20GatewayMintable",
         "nodeType": "ContractDefinition",
@@ -430,7 +430,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 13,
-        "sourceUnit": 1010,
+        "sourceUnit": 1015,
         "src": "25:63:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -444,10 +444,10 @@
               "id": 3,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1009,
+              "referencedDeclaration": 1014,
               "src": "240:5:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$1009",
+                "typeIdentifier": "t_contract$_ERC20_$1014",
                 "typeString": "contract ERC20"
               }
             },
@@ -457,8 +457,8 @@
           }
         ],
         "contractDependencies": [
-          1009,
-          1106
+          1014,
+          1111
         ],
         "contractKind": "contract",
         "documentation": "@title ERC20 interface for token contracts deployed to mainnet that let Ethereum Gateway mint the token.",
@@ -466,8 +466,8 @@
         "id": 12,
         "linearizedBaseContracts": [
           12,
-          1009,
-          1106
+          1014,
+          1111
         ],
         "name": "IERC20GatewayMintable",
         "nodeType": "ContractDefinition",
@@ -566,7 +566,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-08-23T05:48:20.851Z",
+  "updatedAt": "2019-08-27T12:43:13.042Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

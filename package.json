@@ -12,7 +12,7 @@
     "gen:rinkeby-key": "node scripts/gen-eth-key.js rinkeby",
     "map:contracts": "node scripts/map-contracts",
     "map:binance-contracts": "node scripts/map-binance-contracts",
-    "get:binance-private-key" : "node scripts/get-pk-from-keystore binance/binance_keystore",
+    "get:binance-private-key": "node scripts/get-pk-from-keystore binance/binance_keystore",
     "migrate:sample-bep2-token": "cd truffle && truffle deploy --network extdev --from 5 --to 5 --reset"
   },
   "keywords": [],
