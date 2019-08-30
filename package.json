@@ -13,7 +13,9 @@
     "map:contracts": "node scripts/map-contracts",
     "map:binance-contracts": "node scripts/map-binance-contracts",
     "get:binance-private-key": "node scripts/get-pk-from-keystore binance/binance_keystore",
-    "migrate:sample-bep2-token": "cd truffle && truffle deploy --network extdev --from 5 --to 5 --reset"
+    "migrate:sample-bep2-token": "cd truffle && truffle deploy --network extdev --from 5 --to 5 --reset",
+    "migrate:rinkeby-bep2-token": "cd mainnet && npx truffle deploy --network rinkeby --from 2 --to 2 --reset",
+    "map:bep2-contracts": "node scripts/map-contracts bep2"
   },
   "keywords": [],
   "author": "",

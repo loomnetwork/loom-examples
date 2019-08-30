@@ -282,4 +282,9 @@ export default class LoomEthCoin {
     const wei = await this.ethCoin.getBalanceOfAsync(loomAddress)
     return this.web3js.utils.fromWei(wei.toString(), 'ether')
   }
+
+  async approveFee () {
+    const gatewayAddress = Address.fromString(this.loomGatewayContract.address.toString())
+    await this.ethCoin.approveAsync(gatewayAddress, new BN(this._gas()))
+  }
 }
