@@ -91,7 +91,26 @@ Open [http://localhost:8080/](http://localhost:8080/) in your favorite browser.
 
 ## BNB Demo
 
-Follow the instruction from the [Deposit and Withdraw BNB](https://loomx.io/developers/en/deposit-and-withdraw-bnb.html) page.
+Fire up a terminal, `cd` into your directory of choice, and run the following command:
+
+```bash
+git clone https://github.com/loomnetwork/loom-examples
+```
+
+This will download the repository into a new directory called `loom-examples`. Let's `cd` into it and install the dependencies:
+
+```bash
+cd loom-examples
+npm install
+```
+
+Spin up the demo project with:
+
+```bash
+npm run start
+```
+
+See the [Deposit and Withdraw BNB](https://loomx.io/developers/en/deposit-and-withdraw-bnb.html) page for more details.
 
 
 ## BEP2 Demo
