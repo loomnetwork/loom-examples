@@ -3,4 +3,4 @@ const fs = require('fs')
 
 const privateKey = CryptoUtils.generatePrivateKey()
 const privateKeyString = CryptoUtils.Uint8ArrayToB64(privateKey)
-fs.writeFileSync('./truffle/loom-private-key', privateKeyString)
+fs.writeFileSync('./truffle/loom_private_key', privateKeyString)
