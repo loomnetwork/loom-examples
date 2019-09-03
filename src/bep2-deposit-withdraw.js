@@ -13,7 +13,8 @@ var sample = new Vue({
     bep2Coin: null,
     bnbCoin: null,
     bep2LoomAddress: 'Wait a bit until it gets initialized...',
-    binanceAddress: null
+    binanceAddress: null,
+    howToDeposit: null
   },
   methods: {
     async depositWithdrawBEP2Example () {
@@ -30,6 +31,9 @@ var sample = new Vue({
       let tempAddress = data.loomAddress.slice(2, data.loomAddress.length)
       tempAddress = 'loom' + tempAddress
       this.bep2LoomAddress = tempAddress
+      this.howToDeposit = 'Deposit to Extdev: Go to testnet.binance.org. Next, transfer some BNB to the Extdev hot wallet address: tbnb1gc7azhlup5a34t8us84x6d0fluw57deuf47q9w. \
+      Put your extdev address (' + tempAddress + ') in the memo field. \
+      You extdev balance will get updated in a bit.'
     },
     updateBEP2Balance (data) {
       this.bep2Balance = data.newBalance

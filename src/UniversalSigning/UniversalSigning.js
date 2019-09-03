@@ -14,9 +14,26 @@ import Web3 from 'web3'
 import networkConfigs from '../../network-configs.json'
 import { AddressMapper } from 'loom-js/dist/contracts'
 
+let universalSigningInstance = null
+
 export class UniversalSigning {
+  constructor () {
+    if (universalSigningInstance === null) {
+      universalSigningInstance = this
+      return this
+    } else {
+      return this
+    }
+  }
+
   async _load (web3Ethereum) {
     this._loadNetworkConfiguration()
+    if (universalSigningInstance.web3Loom !== undefined && universalSigningInstance.accountMapping !== undefined && universalSigningInstance.client !== undefined) {
+      const web3Loom = universalSigningInstance.web3Loom
+      const accountMapping = universalSigningInstance.accountMapping
+      const client = universalSigningInstance.client
+      return { web3Loom, accountMapping, client }
+    }
     const client = this._createClient()
     client.on('error', console.error)
     const callerAddress = await this._setupSigner(client, web3Ethereum.currentProvider)
@@ -35,6 +52,9 @@ export class UniversalSigning {
     }
     console.log('mapping.ethereum: ' + accountMapping.ethereum.toString())
     console.log('mapping.plasma: ' + accountMapping.plasma.toString())
+    this.web3Loom = web3Loom
+    this.accountMapping = accountMapping
+    this.client = client
     return { web3Loom, accountMapping, client }
   }
 
