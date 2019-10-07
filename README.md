@@ -104,7 +104,7 @@ cd loom-examples
 npm install
 ```
 
-Spin up the demo project with :
+Spin up the demo project with:
 
 ```bash
 npm run start
