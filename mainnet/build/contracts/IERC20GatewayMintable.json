@@ -244,7 +244,7 @@
   "deployedBytecode": "0x",
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity ^0.5.2;\n\nimport \"openzeppelin-solidity/contracts/token/ERC20/ERC20.sol\";\n\n/**\n * @title ERC20 interface for token contracts deployed to mainnet that let Ethereum Gateway mint the token.\n */\ncontract IERC20GatewayMintable is ERC20 {\n    // Called by the Ethereum Gateway contract to mint tokens.\n    //\n    // NOTE: the Ethereum gateway will call this method unconditionally.\n    function mintTo(address _to, uint256 _amount) public;\n}",
+  "source": "pragma solidity ^0.5.2;\n\nimport \"openzeppelin-solidity/contracts/token/ERC20/ERC20.sol\";\n\n/**\n * @title ERC20 interface for token contracts deployed to mainnet that let Ethereum Gateway mint the token.\n */\ncontract IERC20GatewayMintable is ERC20 {\n    // Called by the Ethereum Gateway contract to mint tokens.\n    //\n    // NOTE: the Ethereum gateway will call this method unconditionally.\n    function mintTo(address _to, uint256 _amount) public;\n}\n\n",
   "sourcePath": "/Users/andrei/Documents/GitHub/eth-signing-demo-2/mainnet/contracts/IERC20GatewayMintable.sol",
   "ast": {
     "absolutePath": "/Users/andrei/Documents/GitHub/eth-signing-demo-2/mainnet/contracts/IERC20GatewayMintable.sol",
@@ -273,7 +273,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 13,
-        "sourceUnit": 1015,
+        "sourceUnit": 1050,
         "src": "25:63:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -287,10 +287,10 @@
               "id": 3,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1014,
+              "referencedDeclaration": 1049,
               "src": "240:5:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$1014",
+                "typeIdentifier": "t_contract$_ERC20_$1049",
                 "typeString": "contract ERC20"
               }
             },
@@ -300,8 +300,8 @@
           }
         ],
         "contractDependencies": [
-          1014,
-          1111
+          1049,
+          1146
         ],
         "contractKind": "contract",
         "documentation": "@title ERC20 interface for token contracts deployed to mainnet that let Ethereum Gateway mint the token.",
@@ -309,8 +309,8 @@
         "id": 12,
         "linearizedBaseContracts": [
           12,
-          1014,
-          1111
+          1049,
+          1146
         ],
         "name": "IERC20GatewayMintable",
         "nodeType": "ContractDefinition",
@@ -401,7 +401,7 @@
         "src": "206:244:0"
       }
     ],
-    "src": "0:450:0"
+    "src": "0:452:0"
   },
   "legacyAST": {
     "absolutePath": "/Users/andrei/Documents/GitHub/eth-signing-demo-2/mainnet/contracts/IERC20GatewayMintable.sol",
@@ -430,7 +430,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 13,
-        "sourceUnit": 1015,
+        "sourceUnit": 1050,
         "src": "25:63:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -444,10 +444,10 @@
               "id": 3,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1014,
+              "referencedDeclaration": 1049,
               "src": "240:5:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$1014",
+                "typeIdentifier": "t_contract$_ERC20_$1049",
                 "typeString": "contract ERC20"
               }
             },
@@ -457,8 +457,8 @@
           }
         ],
         "contractDependencies": [
-          1014,
-          1111
+          1049,
+          1146
         ],
         "contractKind": "contract",
         "documentation": "@title ERC20 interface for token contracts deployed to mainnet that let Ethereum Gateway mint the token.",
@@ -466,8 +466,8 @@
         "id": 12,
         "linearizedBaseContracts": [
           12,
-          1014,
-          1111
+          1049,
+          1146
         ],
         "name": "IERC20GatewayMintable",
         "nodeType": "ContractDefinition",
@@ -558,7 +558,7 @@
         "src": "206:244:0"
       }
     ],
-    "src": "0:450:0"
+    "src": "0:452:0"
   },
   "compiler": {
     "name": "solc",
@@ -566,7 +566,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-08-27T12:43:13.042Z",
+  "updatedAt": "2019-10-07T13:33:00.651Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

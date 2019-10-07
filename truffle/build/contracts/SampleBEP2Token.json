@@ -1021,10 +1021,113 @@
   },
   "networks": {
     "9545242630824": {
-      "events": {},
+      "events": {
+        "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Mint",
+          "type": "event",
+          "signature": "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885"
+        },
+        "0xae5184fba832cb2b1f702aca6117b8d265eaf03ad33eb133f19dde0f5920fa08": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "MintFinished",
+          "type": "event",
+          "signature": "0xae5184fba832cb2b1f702aca6117b8d265eaf03ad33eb133f19dde0f5920fa08"
+        },
+        "0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipRenounced",
+          "type": "event",
+          "signature": "0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event",
+          "signature": "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925"
+        },
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event",
+          "signature": "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+        }
+      },
       "links": {},
-      "address": "0x0F9874fcd7B64914B2B4FdB8c855930420b52397",
-      "transactionHash": "0x09ca6e9bb8493356de878cb297a725d6a19018d9a1cd09ea015e3441fe3af2ce"
+      "address": "0x085008E88F7276Ff06bD1b0c6fC3d26FE02B8155",
+      "transactionHash": "0x01fbd5d36f3cee6686c1a222dc09611aa8a4b696ff99423b2c7d0b284710b880"
     },
     "5101040124304": {
       "events": {},
@@ -1033,8 +1136,8 @@
       "transactionHash": "0xd6a447b2cbe778f036b5b09bdbc829d37ece5c3ad753aaf692144702cee49df5"
     }
   },
-  "schemaVersion": "3.0.9",
-  "updatedAt": "2019-08-27T16:38:29.600Z",
+  "schemaVersion": "3.0.14",
+  "updatedAt": "2019-10-07T12:56:36.067Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

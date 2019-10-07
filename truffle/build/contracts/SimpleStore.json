@@ -1153,14 +1153,28 @@
       "transactionHash": "0xde0de523af12328efab27a0f872b0a07fc015ad39f48cb2bcfd02ffc6f17534e"
     },
     "9545242630824": {
-      "events": {},
+      "events": {
+        "0xb922f092a64f1a076de6f21e4d7c6400b6e55791cc935e7bb8e7e90f7652f15b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewValueSet",
+          "type": "event",
+          "signature": "0xb922f092a64f1a076de6f21e4d7c6400b6e55791cc935e7bb8e7e90f7652f15b"
+        }
+      },
       "links": {},
-      "address": "0x7764eBC9B6771F8C9fe9ea54546A07FF0C9c33b7",
-      "transactionHash": "0x8aa1683a706a1130354a20d8640c9376b8f777eb5dc400a85e5380cfba12dbd3"
+      "address": "0x99124d1a2484c7716891b34030242f0b69563eB4",
+      "transactionHash": "0xdaf38ea0a78182fc5f117bd99883b34d0b99f699b4c57d638560e0c6d166ee3e"
     }
   },
-  "schemaVersion": "3.0.9",
-  "updatedAt": "2019-08-27T16:37:50.682Z",
+  "schemaVersion": "3.0.14",
+  "updatedAt": "2019-10-07T12:56:13.981Z",
   "devdoc": {
     "methods": {}
   },

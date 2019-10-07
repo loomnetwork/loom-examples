@@ -55,7 +55,7 @@
     "ethers": "^4.0.27",
     "fortmatic": "^0.7.4",
     "install": "^0.12.2",
-    "loom-js": "^1.58.0",
+    "loom-js": "^1.70.0",
     "loom-truffle-provider": "^0.13.0",
     "npm": "^6.9.0",
     "openzeppelin-solidity": "^1.12.0",
