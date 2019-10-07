@@ -2,6 +2,8 @@ import BNBCoin from './bnb/BNBCoin'
 import { EventBus } from './EventBus/EventBus.js'
 const Web3 = require('web3')
 
+Vue.use(Toasted)
+
 var sample = new Vue({
   el: '#bnb-deposit-withdraw',
   data: {
@@ -10,9 +12,6 @@ var sample = new Vue({
     binanceAddress: null,
     loomAddress: null,
     howToDeposit: null,
-    value: 0,
-    max: 4,
-    label: null,
     amountToWithdraw: null
   },
   watch: {
@@ -40,15 +39,7 @@ var sample = new Vue({
     },
     updateStatus (data) {
       const currentStatus = data.currentStatus
-      const progress = {
-        'waiting': { 'value': 0, 'label': 'Waiting.' },
-        'approving': { 'value': 1, 'label': 'Approving.' },
-        'approved': { 'value': 2, 'label': 'Approved. Next -> Checking the allowance.' },
-        'allowanceChecked': { 'value': 3, 'label': 'Allowance checked. Next -> Withdrawing BNB' },
-        'withdrawn': { 'value': 4, 'label': 'Succesfully withdrawn!' }
-      }
-      this.value = progress[currentStatus]['value']
-      this.label = progress[currentStatus]['label']
+      this.makeToast(currentStatus)
     },
     async withdrawBNB () {
       if ((this.binanceAddress === null) || (this.binanceAddress.length === 0)) {
@@ -74,6 +65,18 @@ var sample = new Vue({
       } else {
         alert('Metamask is not Enabled')
       }
+    },
+    async makeToast (data) {
+      Vue.toasted.show(data, {
+        duration: 4000,
+        type: 'info',
+        action: {
+          text: 'Dismiss',
+          onClick: (e, toast) => {
+            toast.goAway(0)
+          }
+        }
+      })
     }
   },
   async mounted () {

@@ -13,6 +13,7 @@
     <script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
     <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
     <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="https://unpkg.com/vue-toasted"></script>
 </head>
 
 <body>
@@ -37,12 +38,7 @@
             <br>
             Amount to Withdraw (excl. fee):
             <input v-model="amountToWithdraw" placeholder="0.123" class="mb-2">
-
-            <b-progress :max="max" class="mb-2">
-                <b-progress-bar :value="value">
-                    {{label}}
-                </b-progress-bar>
-            </b-progress>
+            <br>
             <b-button variant="outline-primary" v-on:click.prevent="withdrawBNB">Withdraw BNB</b-button>
         </b-card>
     </div>

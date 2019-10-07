@@ -13,12 +13,15 @@
     <script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
     <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
     <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
-
+    <script src="https://unpkg.com/vue-toasted"></script>
 </head>
 
 <body>
     <div id="bep2-deposit-withdraw">
         <b-card title="BEP2 Demo" class="mb-2">
+            <b-card-text>
+                {{howToDeposit}}
+            </b-card-text>
             <b-card-text>
                 Your Loom Address: {{bep2LoomAddress}}
             </b-card-text>
@@ -30,11 +33,6 @@
             </b-card-text>
             Your Binance Address: <input v-model="binanceAddress" class="mb-2">
             <br>
-            <b-progress :max="max" class="mb-2">
-                <b-progress-bar :value="value">
-                    {{label}}
-                </b-progress-bar>
-            </b-progress>
             <b-button variant="outline-primary" v-on:click.prevent="withdrawBEP2" class="mb-2">Withdraw 5 Tokens</b-button>
         </b-card>
     </div>

@@ -3,6 +3,8 @@ import BNBCoin from './bnb/BNBCoin'
 import { EventBus } from './EventBus/EventBus'
 const Web3 = require('web3')
 
+Vue.use(Toasted)
+
 var sample = new Vue({
   el: '#bep2-deposit-withdraw',
   data: {
@@ -12,9 +14,7 @@ var sample = new Vue({
     bnbCoin: null,
     bep2LoomAddress: 'Wait a bit until it gets initialized...',
     binanceAddress: null,
-    value: 0,
-    max: 7,
-    label: null
+    howToDeposit: null
   },
   methods: {
     async depositWithdrawBEP2Example () {
@@ -31,6 +31,9 @@ var sample = new Vue({
       let tempAddress = data.loomAddress.slice(2, data.loomAddress.length)
       tempAddress = 'loom' + tempAddress
       this.bep2LoomAddress = tempAddress
+      this.howToDeposit = 'Deposit to Extdev: Go to testnet.binance.org. Next, transfer some BNB to the Extdev hot wallet address: tbnb1gc7azhlup5a34t8us84x6d0fluw57deuf47q9w. \
+      Put your extdev address (' + tempAddress + ') in the memo field. \
+      You extdev balance will get updated in a bit.'
     },
     updateBEP2Balance (data) {
       this.bep2Balance = data.newBalance
@@ -40,19 +43,7 @@ var sample = new Vue({
     },
     updateStatus (data) {
       const currentStatus = data.currentStatus
-      const progress = {
-        'waiting': { 'value': 0, 'label': 'Waiting.' },
-        'bnbApproving': { 'value': 1, 'label': 'Approving the gateway to take the fee.' },
-        'bnbApproved': { 'value': 2, 'label': 'Approved. Next -> Checking the allowance.' },
-        'bnbWithdrawn': { 'value': 3, 'label': 'Succesfully approved!. Next -> Approving the gateway to take the tokens' },
-
-        'bep2Approving': { 'value': 4, 'label': 'Approving the gateway to take the tokens.' },
-        'bep2Approved': { 'value': 5, 'label': 'Approved. Next -> Checking the allowance.' },
-        'bep2AllowanceChecked': { 'value': 6, 'label': 'Allowance checked. Next -> Withdrawing tokens to Binance.' },
-        'bep2Withdrawn': { 'value': 7, 'label': 'Succesfully withdrawn!' }
-      }
-      this.value = progress[currentStatus]['value']
-      this.label = progress[currentStatus]['label']
+      this.makeToast(currentStatus)
     },
     async withdrawBEP2 () {
       if ((this.binanceAddress === null) || (this.binanceAddress.length === 0)) {
@@ -74,6 +65,18 @@ var sample = new Vue({
       } else {
         alert('Metamask is not Enabled')
       }
+    },
+    async makeToast (data) {
+      Vue.toasted.show(data, {
+        duration: 4000,
+        type: 'info',
+        action: {
+          text: 'Dismiss',
+          onClick: (e, toast) => {
+            toast.goAway(0)
+          }
+        }
+      })
     }
   },
   async mounted () {

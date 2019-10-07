@@ -13,7 +13,8 @@ module.exports = {
     ethsigningportis: ['babel-polyfill', './src/eth-signing-portis.js'],
     ethsigningfortmatic: ['babel-polyfill', './src/eth-signing-fortmatic.js'],
     bnbdepositwithdraw: ['babel-polyfill', './src/bnb-deposit-withdraw.js'],
-    bep2depositwithdraw: ['babel-polyfill', './src/bep2-deposit-withdraw.js']
+    bep2depositwithdraw: ['babel-polyfill', './src/bep2-deposit-withdraw.js'],
+    binanceloomethereum: ['babel-polyfill', './src/binance-loom-ethereum.js']
   },
   output: {
     filename: '[name].[hash:20].js',
@@ -73,6 +74,12 @@ module.exports = {
       inject: true,
       chunks: ['bep2depositwithdraw'],
       filename: 'bep2-deposit-withdraw.html'
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/binance-loom-ethereum.html',
+      inject: true,
+      chunks: ['binanceloomethereum'],
+      filename: 'binance-loom-ethereum.html'
     }),
     new CleanWebpackPlugin()
   ],

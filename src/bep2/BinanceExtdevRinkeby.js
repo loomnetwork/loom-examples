@@ -1,0 +1,244 @@
+import {
+  LocalAddress,
+  CryptoUtils,
+  Address,
+  Contracts
+} from 'loom-js'
+import BN from 'bn.js'
+import extdevBEP2Token from '../../truffle/build/contracts/SampleBEP2Token.json'
+import rinkebyBEP2Token from '../../mainnet/build/contracts/SampleERC20MintableToken.json'
+import { BinanceTransferGateway } from 'loom-js/dist/contracts'
+import bech32 from 'bech32'
+import { EventBus } from '../EventBus/EventBus'
+import GatewayJSON from '../../truffle/build/contracts/Gateway.json'
+import { UniversalSigning } from '../UniversalSigning/UniversalSigning'
+
+export default class BinanceExtdevRinkeby extends UniversalSigning {
+  async load (web3Ethereum) {
+    const { web3Loom, accountMapping, client } = await super._load(web3Ethereum)
+    this._getExtdevUserAddress(accountMapping)
+    await this._getContracts(web3Ethereum, web3Loom, client, accountMapping)
+    this.accountMapping = accountMapping
+    this.client = client
+    await this._filterEvents()
+    await this._refreshBalance()
+  }
+
+  async _getContracts (web3Ethereum, web3Loom, client, accountMapping) {
+    this._getExtdevBEP2Contract(web3Loom)
+    this._getRinkebyBEP2Contract(web3Ethereum)
+    await this._getExtdev2BinanceTransferGatewayContract(client, accountMapping)
+    await this._getExtdev2RinkebyGatewayContract(client, accountMapping)
+    await this._getRinkeby2ExtdevGatewayContract(web3Ethereum)
+  }
+
+  _getExtdevUserAddress (accountMapping) {
+    this.extdevUserAddress = accountMapping.plasma.local.toString()
+    EventBus.$emit('updateExtdevUserAddress', { extdevUserAddress: this.extdevUserAddress })
+  }
+
+  _getExtdevBEP2Contract (web3Loom) {
+    const networkId = this.extdevNetworkConfig['networkId']
+    const extdevBEP2ContractAddress = extdevBEP2Token.networks[networkId].address
+    this.extdevBEP2Contract = new web3Loom.eth.Contract(extdevBEP2Token.abi, extdevBEP2ContractAddress)
+  }
+
+  _getRinkebyBEP2Contract (web3Ethereum) {
+    const networkId = this.rinkebyNetworkConfig['networkId']
+    const rinkebyBEP2ContractAddress = rinkebyBEP2Token.networks[networkId].address
+    this.rinkebyBEP2Contract = new web3Ethereum.eth.Contract(rinkebyBEP2Token.abi, rinkebyBEP2ContractAddress)
+  }
+
+  async _filterEvents () {
+    this.extdevBEP2Contract.events.Transfer({ filter: { address: this.extdevUserAddress } }, async (err, event) => {
+      if (err) console.error('Error on event', err)
+      this._refreshBalance()
+    })
+    this.rinkebyBEP2Contract.events.Transfer({ filter: { address: this.accountMapping.ethereum.local.toString() } }, async (err, event) => {
+      if (err) console.error('Error on event', err)
+      await this._refreshBalance()
+    })
+  }
+
+  async _refreshBalance () {
+    let loomBep2Balance = await this.extdevBEP2Contract.methods.balanceOf(this.extdevUserAddress).call({ from: this.accountMapping.ethereum.local.toString() })
+    loomBep2Balance = loomBep2Balance / 100000000
+
+    let rinkebyBep2Balance = await this.rinkebyBEP2Contract.methods.balanceOf(this.accountMapping.ethereum.local.toString()).call({ from: this.accountMapping.ethereum.local.toString() })
+    rinkebyBep2Balance = rinkebyBep2Balance / 100000000
+    EventBus.$emit('updateBEP2Balance', { loomBep2Balance: loomBep2Balance, rinkebyBep2Balance: rinkebyBep2Balance })
+  }
+
+  async _getExtdev2BinanceTransferGatewayContract (client, accountMapping) {
+    this.extdev2BinanceGatewayContract = await BinanceTransferGateway.createAsync(
+      client,
+      accountMapping.ethereum
+    )
+  }
+
+  async _getBinanceTransferGatewayAddress () {
+    const contractAddr = await this.client.getContractAddressAsync('binance-gateway')
+    return contractAddr.local.toString()
+  }
+
+  async _getRinkeby2ExtdevGatewayContract (web3Ethereum) {
+    this.rinkeby2ExtdevGatewayContract = await new web3Ethereum.eth.Contract(
+      GatewayJSON.abi,
+      this.extdevNetworkConfig['rinkeby2ExtdevGatewayAddress']
+    )
+  }
+
+  async _getExtdev2RinkebyGatewayContract (client, accountMapping) {
+    this.extdev2RinkebyGatewayContract = await Contracts.TransferGateway.createAsync(
+      client,
+      accountMapping.ethereum
+    )
+  }
+
+  async withdrawToBinance (binanceAddress, amountToWithdraw) {
+    const amountInt = amountToWithdraw * 100000000
+    EventBus.$emit('updateStatus', { currentStatus: 'Approving the gateway to take the tokens.' })
+    const binanceTransferGatewayAddress = await this._getBinanceTransferGatewayAddress()
+    await this.extdevBEP2Contract.methods.approve(binanceTransferGatewayAddress, amountInt).send({ from: this.accountMapping.ethereum.local.toString() })
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+    let approvedBalance = 0
+    EventBus.$emit('updateStatus', { currentStatus: 'Approved. Next -> Checking the allowance.' })
+    while (approvedBalance == 0) {
+      approvedBalance = await this.extdevBEP2Contract.methods.allowance(this.extdevUserAddress, binanceTransferGatewayAddress).call({ from: this.accountMapping.ethereum.local.toString() })
+      await delay(5000)
+    }
+    EventBus.$emit('updateStatus', { currentStatus: 'Allowance checked. Next -> Withdrawing tokens to Binance' })
+    const bep2TokenAddress = Address.fromString('extdev-plasma-us1:' + this.extdevBEP2Contract._address.toLowerCase())
+    const tmp = this._decodeAddress(binanceAddress)
+    const recipient = new Address('binance', new LocalAddress(tmp))
+    await this.extdev2BinanceGatewayContract.withdrawTokenAsync(new BN(amountInt, 10), bep2TokenAddress, recipient)
+    EventBus.$emit('updateStatus', { currentStatus: 'Succesfully withdrawn!' })
+    await delay(1000)
+  }
+
+  async withdrawToEthereum (amount) {
+    EventBus.$emit('updateStatus', { currentStatus: 'Transferring to Extdev Gateway.' })
+    await this._transferCoinsToExtdevGateway(amount)
+    EventBus.$emit('updateStatus', { currentStatus: 'Getting withdrawal receipt.' })
+    const data = await this._getWithdrawalReceipt()
+    EventBus.$emit('updateStatus', { currentStatus: 'Withdrawing from Rinkeby Gateway.' })
+    await this._withdrawCoinsFromRinkebyGateway(data)
+  }
+
+  async _transferCoinsToExtdevGateway (amount) {
+    const amountInt = amount * 100000000
+    const dAppChainGatewayAddr = this.extdevNetworkConfig['extdev2RinkebyGatewayAddress']
+    const ethAddress = this.accountMapping.ethereum.local.toString()
+    await this.extdevBEP2Contract.methods
+      .approve(dAppChainGatewayAddr, amountInt)
+      .send({ from: ethAddress })
+
+    const timeout = 60 * 1000
+    const ownerMainnetAddr = Address.fromString('eth:' + ethAddress)
+    const loomCoinContractAddress = extdevBEP2Token.networks[this.extdevNetworkConfig['networkId']].address
+    const tokenAddress = Address.fromString(this.extdevNetworkConfig['chainId'] + ':' + loomCoinContractAddress)
+    const mainNetContractAddress = rinkebyBEP2Token.networks[this.rinkebyNetworkConfig['networkId']].address
+    const gatewayContract = this.extdev2RinkebyGatewayContract
+
+    const receiveSignedWithdrawalEvent = new Promise((resolve, reject) => {
+      let timer = setTimeout(
+        () => reject(new Error('Timeout while waiting for withdrawal to be signed')),
+        timeout
+      )
+      const listener = event => {
+        const tokenEthAddress = Address.fromString('eth:' + mainNetContractAddress)
+        if (
+          event.tokenContract.toString() === tokenEthAddress.toString() &&
+          event.tokenOwner.toString() === ownerMainnetAddr.toString()
+        ) {
+          clearTimeout(timer)
+          timer = null
+          gatewayContract.removeAllListeners(Contracts.TransferGateway.EVENT_TOKEN_WITHDRAWAL)
+          console.log('Oracle signed tx ', CryptoUtils.bytesToHexAddr(event.sig))
+          resolve(event)
+        }
+      }
+      gatewayContract.on(Contracts.TransferGateway.EVENT_TOKEN_WITHDRAWAL, listener)
+    })
+    await gatewayContract.withdrawERC20Async(
+      new BN(amountInt, 10),
+      tokenAddress,
+      ownerMainnetAddr
+    )
+    console.log('before receiveSignedWithdrawalEvent')
+    await receiveSignedWithdrawalEvent
+  }
+
+  async _getWithdrawalReceipt () {
+    const userLocalAddr = Address.fromString(this.accountMapping.plasma.toString())
+    const gatewayContract = this.extdev2RinkebyGatewayContract
+    const data = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
+    if (!data) {
+      return null
+    }
+    console.log(data)
+    const signature = CryptoUtils.bytesToHexAddr(data.oracleSignature)
+    return {
+      signature: signature,
+      amount: data.value.toString(10),
+      tokenContract: data.tokenContract.local.toString()
+    }
+  }
+
+  async _withdrawCoinsFromRinkebyGateway (data) {
+    const rinkebyContractAddress = rinkebyBEP2Token.networks[this.rinkebyNetworkConfig['networkId']].address
+    const userRinkebyAddress = this.accountMapping.ethereum.local.toString()
+    const tx = await this.rinkeby2ExtdevGatewayContract.methods
+      .withdrawERC20(data.amount.toString(), data.signature, rinkebyContractAddress)
+      .send({ from: userRinkebyAddress })
+    console.log(`${data.amount} tokens withdrawn from MainNet Gateway.`)
+    console.log(`Rinkeby tx hash: ${tx.transactionHash}`)
+  }
+
+  async resumeWithdrawal () {
+    const data = await this._getWithdrawalReceipt()
+    if (data !== undefined) {
+      await this._withdrawCoinsFromRinkebyGateway(data.amount, data)
+    }
+  }
+
+  async depositToLoom (amount) {
+    const amountInt = amount * 100000000
+    const rinkebyGatewayAddress = this.extdevNetworkConfig['rinkeby2ExtdevGatewayAddress']
+    const rinkebyContractAddress = rinkebyBEP2Token.networks[this.rinkebyNetworkConfig['networkId']].address
+    const userRinkebyAddress = this.accountMapping.ethereum.local.toString()
+    EventBus.$emit('updateStatus', { currentStatus: 'Approving the transfer gateway to take the tokens.' })
+    try {
+      await this.rinkebyBEP2Contract
+        .methods
+        .approve(
+          rinkebyGatewayAddress,
+          amountInt
+        )
+        .send({ from: userRinkebyAddress })
+    } catch (error) {
+      console.log('Failed to approve Ethereum Gateway to take the coins.')
+      throw error
+    }
+    EventBus.$emit('updateStatus', { currentStatus: 'Depositing to the transfer gateway.' })
+    console.log('Calling depositERC20.')
+    try {
+      await this.rinkeby2ExtdevGatewayContract
+        .methods
+        .depositERC20(
+          amountInt,
+          rinkebyContractAddress
+        )
+        .send({ from: userRinkebyAddress, gas: '489362' })
+    } catch (error) {
+      console.log('Failed to transfer coin to the Ethereum Gateway')
+      throw error
+    }
+    EventBus.$emit('updateStatus', { currentStatus: 'Tokens deposited!' })
+  }
+
+  _decodeAddress (value) {
+    const decodeAddress = bech32.decode(value)
+    return Buffer.from(bech32.fromWords(decodeAddress.words))
+  }
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> Deposit and Withdraw BEP2 </title>
+    <meta name="viewport" content="width=device-width,initial- scale=1">
+    <link rel="shortcut icon" href="#" />
+    <!-- Load polyfills to support older browsers -->
+    <script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CMutationObserver" crossorigin="anonymous"></script>
+    <!-- Load Vue followed by BootstrapVue -->
+    <script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
+    <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="https://unpkg.com/vue-toasted"></script>
+</head>
+
+<body>
+    <div id="binance-loom-ethereum">
+        <b-card title="Binance-Loom-Ethereum" class="mb-2">
+            <b-card-text>
+                Your Loom Address: {{extdevUserAddress}}
+                <br>
+                Extdev hot wallet address: {{extdevHotWalletAddress}}
+            </b-card-text>
+            <b-card-text>
+              Extdev
+            </b-card-text>
+            <b-card-text class="small text-muted">
+                BNB Balance: {{extdevBnbCoinBalance}}
+            </b-card-text>
+            <b-card-text class="small text-muted">
+                BEP2 Balance: {{extdevBep2CoinBalance}}
+            </b-card-text>
+            <b-card-text class="small text-muted">
+              Eth Balance: {{extdevEthBalance}}
+            </b-card-text>
+            <b-card-text>
+              Rinkeby
+            </b-card-text>
+            <b-card-text class="small text-muted">
+              BEP2 Coin Balance: {{rinkebyBep2CoinBalance}}
+            </b-card-text>
+            <b-card-text class="small text-muted">
+              ETH Balance: {{rinkebyEthBalance}}
+            </b-card-text>
+            Your Binance Address: <input v-model="binanceAddress" class="mb-2">
+            <br>
+            <b-button variant="outline-primary" v-on:click.prevent="withdrawToBinance" class="mb-2">Move 5 tokens from Extdev to Binance</b-button>
+            <b-button variant="outline-primary" v-on:click.prevent="withdrawToEthereum" class="mb-2">Move 5 tokens from Extdev to Rinkeby</b-button>
+            <b-button variant="outline-primary" v-on:click.prevent="resumeLoomToEthereum" class="mb-2">Resume Extdev to Rinkeby transfer</b-button>
+            <b-button variant="outline-primary" v-on:click.prevent="depositToLoom" class="mb-2">Move 5 tokens from Rinkeby to Extdev</b-button>
+        </b-card>
+    </div>
+
+</body>
+
+</html>
