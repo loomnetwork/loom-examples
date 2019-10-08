@@ -2,7 +2,9 @@ import GatewayJSON from '../../truffle/build/contracts/Gateway.json'
 import {
   CryptoUtils,
   Address,
-  Contracts
+  Contracts,
+  createEthereumGatewayAsync,
+  getMetamaskSigner
 } from 'loom-js'
 import { EventBus } from '../EventBus/EventBus'
 import networkConfigs from '../../network-configs.json'
@@ -43,6 +45,28 @@ export default class LoomEthCoin extends UniversalSigning {
     this.loomGatewayContract = await Contracts.TransferGateway.createAsync(
       client,
       accountMapping.ethereum
+    )
+
+    const networkId = await this.web3Ethereum.eth.net.getId()
+    let version
+    switch (networkId) {
+      case 1: // Ethereum Mainnet
+        version = 1
+        break
+
+      case 4: // Rinkeby
+        version = 2
+        break
+      default:
+        throw new Error('Ethereum Gateway is not deployed on network ' + networkId)
+    }
+
+    const signer = getMetamaskSigner(this.web3Ethereum.currentProvider)
+
+    this.ethereumGatewayContract = await createEthereumGatewayAsync(
+      version,
+      this._RinkebyGatewayAddress(),
+      signer
     )
   }
 
@@ -102,43 +126,25 @@ export default class LoomEthCoin extends UniversalSigning {
   async _getWithdrawalReceipt () {
     const userLocalAddr = this.accountMapping.plasma
     const gatewayContract = this.loomGatewayContract
-    const data = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
-    console.log('data:', data)
-    if (!data) {
-      return null
-    }
-    const signature = CryptoUtils.bytesToHexAddr(data.oracleSignature)
-    return {
-      signature: signature,
-      amount: data.value.toString(10),
-      tokenContract: data.tokenContract.local.toString()
-    }
+    const receipt = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
+    return receipt
   }
 
-  async _withdrawEthFromMainNetGateway (data) {
+  async _withdrawEthFromMainNetGateway (receipt) {
     console.log('withdrawing from mainnet gateway')
-    const gatewayContract = this.mainNetGatewayContract
+    const gatewayContract = this.ethereumGatewayContract
     const ethereumAddress = this.accountMapping.ethereum.local.toString()
     const gas = this._gas()
-    const gasEstimate = await gatewayContract.methods
-      .withdrawETH(data.amount.toString(), data.signature)
-      .estimateGas({ from: ethereumAddress, gas })
-
-    if (gasEstimate == gas) {
-      throw new Error('Not enough enough gas, send more.')
-    }
-    const tx = await gatewayContract.methods
-      .withdrawETH(data.amount.toString(), data.signature)
-      .send({ from: ethereumAddress })
+    const tx = await gatewayContract.withdrawAsync(receipt, { gasLimit: gas })
     console.log(tx)
   }
 
   async withdrawEth (amount) {
     await this._approveGatewayToTakeEth(amount)
     await this._transferEthToLoomGateway(amount)
-    const data = await this._getWithdrawalReceipt()
-    if (data !== undefined) {
-      await this._withdrawEthFromMainNetGateway(data)
+    const receipt = await this._getWithdrawalReceipt()
+    if (receipt !== undefined) {
+      await this._withdrawEthFromMainNetGateway(receipt)
     }
   }
 
