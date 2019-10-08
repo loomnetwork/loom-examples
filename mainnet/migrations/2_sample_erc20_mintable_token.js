@@ -1,6 +1,6 @@
 const SampleERC20MintableToken = artifacts.require('./SampleERC20MintableToken.sol')
 
-const gatewayAddress = '0xb73C9506cb7f4139A4D6Ac81DF1e5b6756Fab7A2'.toLowerCase()
+const gatewayAddress = '0x9c67fD4eAF0497f9820A3FBf782f81D6b6dC4Baa'.toLowerCase()
 
 module.exports = function (deployer, network, accounts) {
   if (network !== 'rinkeby') {

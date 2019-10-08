@@ -1458,12 +1458,12 @@
         }
       },
       "links": {},
-      "address": "0x34a84D23fe6750aBDe362A14ddc4C4124a4858Cf",
-      "transactionHash": "0x8a4e8519ff177e01ca11a26b6157392a9ba0d16fe9b0eb212e0ae94435c83281"
+      "address": "0x9eeE94a878C070A615d24c2DC808e0d3828f24Ab",
+      "transactionHash": "0x3670f49e648ded5601d5e7d3afe13c05c9b0ef42af56fbb6f02a11c50acb884b"
     }
   },
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-10-08T09:36:09.492Z",
+  "updatedAt": "2019-10-08T11:21:10.831Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

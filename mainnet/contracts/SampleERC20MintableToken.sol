@@ -25,7 +25,6 @@ contract SampleERC20MintableToken is ERC20Mintable, IERC20GatewayMintable {
         validators[msg.sender] = true;
         name = "erc20mintable";
         symbol = "MNT20";
-        _mint(_gateway, 100000000000000);
     }
 
     function mintTo(address _to, uint256 _amount) onlyGateway public {

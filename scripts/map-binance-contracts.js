@@ -74,9 +74,7 @@ async function mapContracts () {
   console.log('Mapping contracts')
   const extdev = loadExtdevAccount()
   const client = extdev.client
-  console.log(client.chainId)
   const binancePrivateKey = getBinancePrivateKey()
-  console.log('binancePrivateKey:' + binancePrivateKey)
   const signer = new BinanceSigner(binancePrivateKey)
   const binanceTokenSymbol = getBinanceTokenSymbol()
   const extdevNetworkId = await extdev.web3js.eth.net.getId()
@@ -86,5 +84,3 @@ async function mapContracts () {
 }
 
 mapContracts()
-
-

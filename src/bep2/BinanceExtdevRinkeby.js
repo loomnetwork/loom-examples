@@ -2,7 +2,9 @@ import {
   LocalAddress,
   CryptoUtils,
   Address,
-  Contracts
+  Contracts,
+  createEthereumGatewayAsync,
+  getMetamaskSigner
 } from 'loom-js'
 import BN from 'bn.js'
 import extdevBEP2Token from '../../truffle/build/contracts/SampleBEP2Token.json'
@@ -14,6 +16,15 @@ import GatewayJSON from '../../truffle/build/contracts/Gateway.json'
 import { UniversalSigning } from '../UniversalSigning/UniversalSigning'
 
 export default class BinanceExtdevRinkeby extends UniversalSigning {
+
+  _gas () {
+    return 350000
+  }
+
+  _RinkebyGatewayAddress () {
+    return this.extdevNetworkConfig['rinkeby2ExtdevGatewayAddress']
+  }
+
   async load (web3Ethereum) {
     const { web3Loom, accountMapping, client } = await super._load(web3Ethereum)
     this._getExtdevUserAddress(accountMapping)
@@ -30,11 +41,36 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
     await this._getExtdev2BinanceTransferGatewayContract(client, accountMapping)
     await this._getExtdev2RinkebyGatewayContract(client, accountMapping)
     await this._getRinkeby2ExtdevGatewayContract(web3Ethereum)
+    await this._getEthereumTransferGatewayContract(web3Ethereum)
   }
 
   _getExtdevUserAddress (accountMapping) {
     this.extdevUserAddress = accountMapping.plasma.local.toString()
     EventBus.$emit('updateExtdevUserAddress', { extdevUserAddress: this.extdevUserAddress })
+  }
+
+  async _getEthereumTransferGatewayContract (web3Ethereum) {
+    const networkId = await web3Ethereum.eth.net.getId()
+    let version
+    switch (networkId) {
+      case 1: // Ethereum Mainnet
+        version = 1
+        break
+
+      case 4: // Rinkeby
+        version = 2
+        break
+      default:
+        throw new Error('Ethereum Gateway is not deployed on network ' + networkId)
+    }
+
+    const signer = getMetamaskSigner(web3Ethereum.currentProvider)
+
+    this.ethereumGatewayContract = await createEthereumGatewayAsync(
+      version,
+      this._RinkebyGatewayAddress(),
+      signer
+    )
   }
 
   _getExtdevBEP2Contract (web3Loom) {
@@ -172,33 +208,22 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
   async _getWithdrawalReceipt () {
     const userLocalAddr = Address.fromString(this.accountMapping.plasma.toString())
     const gatewayContract = this.extdev2RinkebyGatewayContract
-    const data = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
-    if (!data) {
-      return null
-    }
-    console.log(data)
-    const signature = CryptoUtils.bytesToHexAddr(data.oracleSignature)
-    return {
-      signature: signature,
-      amount: data.value.toString(10),
-      tokenContract: data.tokenContract.local.toString()
-    }
+    const receipt = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
+    return receipt
   }
 
-  async _withdrawCoinsFromRinkebyGateway (data) {
-    const rinkebyContractAddress = rinkebyBEP2Token.networks[this.rinkebyNetworkConfig['networkId']].address
-    const userRinkebyAddress = this.accountMapping.ethereum.local.toString()
-    const tx = await this.rinkeby2ExtdevGatewayContract.methods
-      .withdrawERC20(data.amount.toString(), data.signature, rinkebyContractAddress)
-      .send({ from: userRinkebyAddress })
-    console.log(`${data.amount} tokens withdrawn from MainNet Gateway.`)
-    console.log(`Rinkeby tx hash: ${tx.transactionHash}`)
+  async _withdrawCoinsFromRinkebyGateway (receipt) {
+    const gatewayContract = this.ethereumGatewayContract
+    const gas = this._gas()
+    const tx = await gatewayContract.withdrawAsync(receipt, { gasLimit: gas })
+    console.log(`Tokens withdrawn from MainNet Gateway.`)
+    console.log(`Rinkeby tx hash: ${tx.hash}`)
   }
 
   async resumeWithdrawal () {
-    const data = await this._getWithdrawalReceipt()
-    if (data !== undefined) {
-      await this._withdrawCoinsFromRinkebyGateway(data.amount, data)
+    const receipt = await this._getWithdrawalReceipt()
+    if (receipt !== undefined) {
+      await this._withdrawCoinsFromRinkebyGateway(receipt)
     }
   }
 
