@@ -10,6 +10,7 @@ import {
   Contracts,
   EthersSigner,
   createDefaultTxMiddleware,
+  createEthereumGatewayAsync,
   getMetamaskSigner
 } from 'loom-js'
 
@@ -23,10 +24,16 @@ const Web3 = require('web3')
 const BN = require('bn.js')
 
 export default class ERC20 {
+  _gas () {
+    return 350000
+  }
+
+  _RinkebyGatewayAddress () {
+    return this.extdevConfig['rinkeby2ExtdevGatewayAddress']
+  }
 
   async load (web3js) {
-    this.extdevConfig = networkConfigs.networks['extdev']
-    this.rinkebyConfig = networkConfigs.networks['rinkeby']
+    this._loadNetworkConfiguration()
     const client = this._createClient()
     client.on('error', console.error)
     const callerAddress = await this._setupSigner(client, web3js.currentProvider)
@@ -48,7 +55,7 @@ export default class ERC20 {
     this.accountMapping = accountMapping
     this.web3js = web3js
     this.web3loom = web3
-    await this._getContracts(client, accountMapping)
+    await this._getContracts(client, web3js, accountMapping)
     await this._updateBalances()
   }
 
@@ -100,10 +107,15 @@ export default class ERC20 {
     return callerAddress
   }
 
+  _loadNetworkConfiguration () {
+    this.extdevConfig = networkConfigs.networks['extdev']
+    this.rinkebyConfig = networkConfigs.networks['rinkeby']
+  }
+
   _createClient () {
-    const chainId = 'extdev-plasma-us1'
-    const writeUrl = 'wss://extdev-plasma-us1.dappchains.com/websocket'
-    const readUrl = 'wss://extdev-plasma-us1.dappchains.com/queryws'
+    const chainId = this.extdevConfig['chainId']
+    const writeUrl = this.extdevConfig['writeUrl']
+    const readUrl = this.extdevConfig['readUrl']
     const client = new Client(chainId, writeUrl, readUrl)
     return client
   }
@@ -136,7 +148,7 @@ export default class ERC20 {
     }
   }
 
-  async _getContracts (client, accountMapping) {
+  async _getContracts (client, web3js, accountMapping) {
     this.mainNetGatewayContract = await new this.web3js.eth.Contract(
       GatewayJSON.abi,
       this.extdevConfig['rinkeby2ExtdevGatewayAddress']
@@ -158,6 +170,28 @@ export default class ERC20 {
     console.log('loomCoinContractAddress: ' + loomCoinContractAddress)
     this.loomCoinContract = new this.web3loom.eth.Contract(LoomCoinJSON.abi, loomCoinContractAddress)
     console.log('loomCoinContract', this.loomCoinContract)
+
+    const networkId = await this.web3js.eth.net.getId()
+    let version
+    switch (networkId) {
+      case 1: // Ethereum Mainnet
+        version = 1
+        break
+
+      case 4: // Rinkeby
+        version = 2
+        break
+      default:
+        throw new Error('Ethereum Gateway is not deployed on network ' + networkId)
+    }
+
+    const signer = getMetamaskSigner(this.web3js.currentProvider)
+
+    this.ethereumGatewayContract = await createEthereumGatewayAsync(
+      version,
+      this._RinkebyGatewayAddress(),
+      signer
+    )
   }
 
   async _updateBalances () {
@@ -226,9 +260,9 @@ export default class ERC20 {
     console.log('Transferring to Loom Gateway.')
     await this._transferCoinsToLoomGateway(amount)
     console.log('Getting withdrawal receipt')
-    const data = await this._getWithdrawalReceipt()
+    const receipt = await this._getWithdrawalReceipt()
     console.log('Withdrawing from MainNet Gateway')
-    await this._withdrawCoinsFromMainNetGateway(data)
+    await this._withdrawCoinsFromMainNetGateway(receipt)
   }
 
   async _transferCoinsToLoomGateway (amount) {
@@ -278,33 +312,24 @@ export default class ERC20 {
   async _getWithdrawalReceipt () {
     const userLocalAddr = Address.fromString(this.accountMapping.plasma.toString())
     const gatewayContract = this.loomGatewayContract
-
-    const data = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
-    if (!data) {
-      return null
-    }
-    const signature = CryptoUtils.bytesToHexAddr(data.oracleSignature)
-    return {
-      signature: signature,
-      amount: data.value.toString(10),
-      tokenContract: data.tokenContract.local.toString()
-    }
+    const receipt = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
+    return receipt
   }
 
-  async _withdrawCoinsFromMainNetGateway (data) {
-    const mainNetContractAddress = MainNetCoinJSON.networks[this.rinkebyConfig['networkId']].address
-    const ethAddress = this.accountMapping.ethereum.local.toString()
-    const tx = await this.mainNetGatewayContract.methods
-      .withdrawERC20(data.amount.toString(), data.signature, mainNetContractAddress)
-      .send({ from: ethAddress })
-    console.log(`${data.amount} tokens withdrawn from MainNet Gateway.`)
-    console.log(`Rinkeby tx hash: ${tx.transactionHash}`)
+  async _withdrawCoinsFromMainNetGateway (receipt) {
+    // const mainNetContractAddress = MainNetCoinJSON.networks[this.rinkebyConfig['networkId']].address
+    // const ethAddress = this.accountMapping.ethereum.local.toString()
+    const gatewayContract = this.ethereumGatewayContract
+    const gas = this._gas()
+    const tx = await gatewayContract.withdrawAsync(receipt, { gasLimit: gas })
+    console.log(`Tokens withdrawn from MainNet Gateway.`)
+    console.log(`Rinkeby tx hash: ${tx.hash}`)
   }
 
   async resumeWithdrawal () {
-    const data = await this._getWithdrawalReceipt()
-    if (data !== undefined) {
-      await this._withdrawCoinsFromMainNetGateway(data.amount, data)
+    const receipt = await this._getWithdrawalReceipt()
+    if (receipt !== undefined) {
+      await this._withdrawCoinsFromMainNetGateway(receipt)
     }
   }
 

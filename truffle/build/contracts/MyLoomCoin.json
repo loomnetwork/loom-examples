@@ -2028,12 +2028,12 @@
         }
       },
       "links": {},
-      "address": "0x11130c4FB37680be28C3B1b7De3C4141956CdF9A",
-      "transactionHash": "0xe05dedfd20394fdb93725239e41ce9249d2476dcbd1bea363defd4bc6bcfd0e4"
+      "address": "0xd3490944F6324F2C7Bba8d89114e11c418A8B2F5",
+      "transactionHash": "0x7254c01b916dfc2bcb1de171bc962614fa606dcd5dd3d8a80ed2435c253fd62a"
     }
   },
   "schemaVersion": "3.0.14",
-  "updatedAt": "2019-10-07T12:56:25.334Z",
+  "updatedAt": "2019-10-08T09:37:04.904Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
