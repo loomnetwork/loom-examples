@@ -149,9 +149,9 @@ export default class LoomEthCoin extends UniversalSigning {
   }
 
   async resumeWithdrawal () {
-    const data = await this._getWithdrawalReceipt()
-    if (data !== undefined) {
-      await this._withdrawEthFromMainNetGateway(data)
+    const receipt = await this._getWithdrawalReceipt()
+    if (receipt !== undefined) {
+      await this._withdrawEthFromMainNetGateway(receipt)
     }
   }
 

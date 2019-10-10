@@ -132,10 +132,11 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
   }
 
   async withdrawToBinance (binanceAddress, amountToWithdraw) {
-    const amountInt = amountToWithdraw * 100000000
+    const multiplier = new BN(100000000, 10)
+    const amountInt = (new BN(parseInt(amountToWithdraw), 10)).mul(multiplier)
     EventBus.$emit('updateStatus', { currentStatus: 'Approving the gateway to take the tokens.' })
     const binanceTransferGatewayAddress = await this._getBinanceTransferGatewayAddress()
-    await this.extdevBEP2Contract.methods.approve(binanceTransferGatewayAddress, amountInt).send({ from: this.accountMapping.ethereum.local.toString() })
+    await this.extdevBEP2Contract.methods.approve(binanceTransferGatewayAddress, amountInt.toString()).send({ from: this.accountMapping.ethereum.local.toString() })
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
     let approvedBalance = 0
     EventBus.$emit('updateStatus', { currentStatus: 'Approved. Next -> Checking the allowance.' })
@@ -147,7 +148,7 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
     const bep2TokenAddress = Address.fromString('extdev-plasma-us1:' + this.extdevBEP2Contract._address.toLowerCase())
     const tmp = this._decodeAddress(binanceAddress)
     const recipient = new Address('binance', new LocalAddress(tmp))
-    await this.extdev2BinanceGatewayContract.withdrawTokenAsync(new BN(amountInt, 10), bep2TokenAddress, recipient)
+    await this.extdev2BinanceGatewayContract.withdrawTokenAsync(amountInt, bep2TokenAddress, recipient)
     EventBus.$emit('updateStatus', { currentStatus: 'Succesfully withdrawn!' })
     await delay(1000)
   }
@@ -156,17 +157,18 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
     EventBus.$emit('updateStatus', { currentStatus: 'Transferring to Extdev Gateway.' })
     await this._transferCoinsToExtdevGateway(amount)
     EventBus.$emit('updateStatus', { currentStatus: 'Getting withdrawal receipt.' })
-    const data = await this._getWithdrawalReceipt()
+    const receipt = await this._getWithdrawalReceipt()
     EventBus.$emit('updateStatus', { currentStatus: 'Withdrawing from Rinkeby Gateway.' })
-    await this._withdrawCoinsFromRinkebyGateway(data)
+    await this._withdrawCoinsFromRinkebyGateway(receipt)
   }
 
   async _transferCoinsToExtdevGateway (amount) {
-    const amountInt = amount * 100000000
+    const multiplier = new BN(100000000, 10)
+    const amountInt = (new BN(parseInt(amount), 10)).mul(multiplier)
     const dAppChainGatewayAddr = this.extdevNetworkConfig['extdev2RinkebyGatewayAddress']
     const ethAddress = this.accountMapping.ethereum.local.toString()
     await this.extdevBEP2Contract.methods
-      .approve(dAppChainGatewayAddr, amountInt)
+      .approve(dAppChainGatewayAddr, amountInt.toString())
       .send({ from: ethAddress })
 
     const timeout = 60 * 1000
@@ -197,11 +199,10 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
       gatewayContract.on(Contracts.TransferGateway.EVENT_TOKEN_WITHDRAWAL, listener)
     })
     await gatewayContract.withdrawERC20Async(
-      new BN(amountInt, 10),
+      amountInt,
       tokenAddress,
       ownerMainnetAddr
     )
-    console.log('before receiveSignedWithdrawalEvent')
     await receiveSignedWithdrawalEvent
   }
 
@@ -228,7 +229,8 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
   }
 
   async depositToLoom (amount) {
-    const amountInt = amount * 100000000
+    const multiplier = new BN(100000000, 10)
+    const amountInt = (new BN(parseInt(amount), 10)).mul(multiplier)
     const rinkebyGatewayAddress = this.extdevNetworkConfig['rinkeby2ExtdevGatewayAddress']
     const rinkebyContractAddress = rinkebyBEP2Token.networks[this.rinkebyNetworkConfig['networkId']].address
     const userRinkebyAddress = this.accountMapping.ethereum.local.toString()
@@ -238,7 +240,7 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
         .methods
         .approve(
           rinkebyGatewayAddress,
-          amountInt
+          amountInt.toString()
         )
         .send({ from: userRinkebyAddress })
     } catch (error) {
@@ -251,7 +253,7 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
       await this.rinkeby2ExtdevGatewayContract
         .methods
         .depositERC20(
-          amountInt,
+          amountInt.toString(),
           rinkebyContractAddress
         )
         .send({ from: userRinkebyAddress, gas: '489362' })
