@@ -117,3 +117,7 @@ See the [Deposit and Withdraw BNB](https://loomx.io/developers/en/deposit-and-wi
 
 See the [Deposit and Withdraw BEP2](https://loomx.io/developers/en/deposit-and-withdraw-bep2.html) page for instructions on how to run this demo.
 
+## Move Tokens between Binance, Loom, and Ethereum
+
+See the [Move Tokens between Binance, Loom, and Ethereum](https://loomx.io/developers/en/binance-loom-ethereum.html) page for instructions on how to run this demo.
+
