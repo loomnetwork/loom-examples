@@ -8,12 +8,12 @@ const ethers = require('ethers')
 const fs = require('fs')
 const Web3 = require('web3')
 const path = require('path')
-const bep2Token = require('../truffle/build/contracts/SampleBEP2Token.json')
+const bep2Token = require('../loom/build/contracts/SampleBEP2Token.json')
 const extdevChainId = 'extdev-plasma-us1'
 const BinanceTransferGateway = Contracts.BinanceTransferGateway
 
 function loadExtdevAccount () {
-  const privateKeyStr = fs.readFileSync(path.join(__dirname, '../truffle/loom_private_key'), 'utf-8')
+  const privateKeyStr = fs.readFileSync(path.join(__dirname, '../loom/loom_private_key'), 'utf-8')
   const privateKey = CryptoUtils.B64ToUint8Array(privateKeyStr)
   const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
   const client = new Client(

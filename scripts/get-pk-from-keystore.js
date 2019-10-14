@@ -13,6 +13,7 @@ if (process.argv.length <= 2) {
 	process.exit(1);
 }
 let path = process.argv[2]
+console.log(path)
 
 const rl = readline.createInterface({
   input: process.stdin,

@@ -7,12 +7,12 @@ import {
   getMetamaskSigner
 } from 'loom-js'
 import BN from 'bn.js'
-import extdevBEP2Token from '../../truffle/build/contracts/SampleBEP2Token.json'
-import rinkebyBEP2Token from '../../mainnet/build/contracts/SampleERC20MintableToken.json'
+import extdevBEP2Token from '../../loom/build/contracts/SampleBEP2Token.json'
+import rinkebyBEP2Token from '../../ethereum/build/contracts/SampleERC20MintableToken.json'
 import { BinanceTransferGateway } from 'loom-js/dist/contracts'
 import bech32 from 'bech32'
 import { EventBus } from '../EventBus/EventBus'
-import GatewayJSON from '../../truffle/build/contracts/Gateway.json'
+import GatewayJSON from '../../contracts/Gateway.json'
 import { UniversalSigning } from '../UniversalSigning/UniversalSigning'
 
 export default class BinanceExtdevRinkeby extends UniversalSigning {

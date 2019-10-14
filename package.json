@@ -6,17 +6,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development",
-    "migrate:loom": " cd truffle && npx truffle migrate --network extdev --reset -all",
-    "migrate:rinkeby": " cd mainnet && truffle migrate --network rinkeby --reset -all",
+    "migrate:loom": " cd loom && npx truffle migrate --network extdev --reset -all",
+    "migrate:rinkeby": " cd ethereum && truffle migrate --network rinkeby --reset -all",
     "gen:loom-key": "node scripts/gen-loom-key.js",
     "gen:rinkeby-key": "node scripts/gen-eth-key.js rinkeby",
     "map:contracts": "node scripts/map-contracts",
     "map:binance-contracts": "node scripts/map-binance-contracts",
     "get:binance-private-key": "node scripts/get-pk-from-keystore binance/binance_keystore",
-    "migrate:dappchain-bep2-token": "cd truffle && npx truffle deploy --network extdev -f4 --to 4",
+    "migrate:dappchain-bep2-token": "cd loom && npx truffle deploy --network extdev -f4 --to 4",
     "migrate:rinkeby-bep2-token": "cd mainnet && npx truffle deploy --network rinkeby -f 2 --to 2",
     "map:bep2-contracts": "node scripts/map-contracts bep2",
-    "postinstall": "cd mainnet && npm install && cd .. && cd truffle && npm install"
+    "postinstall": "cd ethereum && npm install && cd .. && cd loom && npm install"
   },
   "keywords": [],
   "author": "",

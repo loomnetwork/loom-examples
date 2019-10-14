@@ -14,7 +14,7 @@ import {
 import { AddressMapper } from 'loom-js/dist/contracts'
 import { EventBus } from '../EventBus/EventBus'
 import networkConfigs from '../../network-configs.json'
-import SimpleStoreJSON from '../../truffle/build/contracts/SimpleStore.json'
+import SimpleStoreJSON from '../../loom/build/contracts/SimpleStore.json'
 
 const Web3 = require('web3')
 

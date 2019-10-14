@@ -5,17 +5,17 @@ const {
 const fs = require('fs')
 const Web3 = require('web3')
 const path = require('path')
-const ExtdevBEP2CoinJSON = require('../truffle/build/contracts/SampleBEP2Token.json')
-const RinkebyBEP2CoinJSON = require('../mainnet/build/contracts/SampleERC20MintableToken.json')
-const RinkebyStandardCoinJSON = require('../mainnet/build/contracts/MyMainNetCoin.json')
-const ExtdevStandardCoinJSON = require('../truffle/build/contracts/MyLoomCoin.json')
+const ExtdevBEP2CoinJSON = require('../loom/build/contracts/SampleBEP2Token.json')
+const RinkebyBEP2CoinJSON = require('../ethereum/build/contracts/SampleERC20MintableToken.json')
+const RinkebyStandardCoinJSON = require('../ethereum/build/contracts/MyMainNetCoin.json')
+const ExtdevStandardCoinJSON = require('../loom/build/contracts/MyLoomCoin.json')
 const extdevChainId = 'extdev-plasma-us1'
 const { OfflineWeb3Signer } = require('loom-js/dist/solidity-helpers')
 const TransferGateway = Contracts.TransferGateway
 
 class ContractsMapper {
   _loadExtdevAccount () {
-    const privateKeyStr = fs.readFileSync(path.join(__dirname, '../truffle/loom_private_key'), 'utf-8')
+    const privateKeyStr = fs.readFileSync(path.join(__dirname, '../loom/loom_private_key'), 'utf-8')
     const privateKey = CryptoUtils.B64ToUint8Array(privateKeyStr)
     const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
     const client = new Client(

@@ -1,4 +1,4 @@
-import GatewayJSON from '../../truffle/build/contracts/Gateway.json'
+import GatewayJSON from '../../contracts/Gateway.json'
 import {
   CryptoUtils,
   Address,

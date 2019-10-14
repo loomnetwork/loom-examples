@@ -1,177 +1,51 @@
-import GatewayJSON from '../../truffle/build/contracts/Gateway.json'
+import GatewayJSON from '../../contracts/Gateway.json'
 import {
-  NonceTxMiddleware,
-  SignedEthTxMiddleware,
   CryptoUtils,
-  Client,
-  LoomProvider,
   Address,
-  LocalAddress,
   Contracts,
-  EthersSigner,
-  createDefaultTxMiddleware,
   createEthereumGatewayAsync,
   getMetamaskSigner
 } from 'loom-js'
-
-import { AddressMapper } from 'loom-js/dist/contracts'
 import { EventBus } from '../EventBus/EventBus'
-import MainNetCoinJSON from '../../mainnet/build/contracts/MyMainNetCoin.json'
-import LoomCoinJSON from '../../truffle/build/contracts/MyLoomCoin.json'
-import networkConfigs from '../../network-configs.json'
+import MainNetCoinJSON from '../../ethereum/build/contracts/MyMainNetCoin.json'
+import LoomCoinJSON from '../../loom/build/contracts/MyLoomCoin.json'
+import { UniversalSigning } from '../UniversalSigning/UniversalSigning'
 
 const Web3 = require('web3')
 const BN = require('bn.js')
 
-export default class ERC20 {
+export default class ERC20 extends UniversalSigning {
   _gas () {
     return 350000
   }
 
   _RinkebyGatewayAddress () {
-    return this.extdevConfig['rinkeby2ExtdevGatewayAddress']
+    return this.extdevNetworkConfig['rinkeby2ExtdevGatewayAddress']
   }
 
-  async load (web3js) {
-    this._loadNetworkConfiguration()
-    const client = this._createClient()
-    client.on('error', console.error)
-    const callerAddress = await this._setupSigner(client, web3js.currentProvider)
-    console.log('callerAddress: ' + callerAddress)
-    const loomProvider = await this._createLoomProvider(client, callerAddress)
-    const web3 = new Web3(loomProvider)
-    let accountMapping = await this._loadMapping(callerAddress, client)
-    if (accountMapping === null) {
-      console.log('Create a new mapping')
-      const signer = getMetamaskSigner(web3js.currentProvider)
-      await this._createNewMapping(signer)
-      accountMapping = await this._loadMapping(callerAddress, client)
-      console.log(accountMapping)
-    } else {
-      console.log('mapping already exists')
-    }
-    console.log('mapping.ethereum: ' + accountMapping.ethereum.toString())
-    console.log('mapping.plasma: ' + accountMapping.plasma.toString())
+  async load (web3Ethereum) {
+    const { web3Loom, accountMapping, client } = await super._load(web3Ethereum)
     this.accountMapping = accountMapping
-    this.web3js = web3js
-    this.web3loom = web3
-    await this._getContracts(client, web3js, accountMapping)
+    this.web3Ethereum = web3Ethereum
+    this.web3Loom = web3Loom
+    await this._getContracts(client, web3Ethereum, web3Loom, accountMapping)
     await this._updateBalances()
   }
 
-  async _loadMapping (ethereumAccount, client) {
-    const mapper = await AddressMapper.createAsync(client, ethereumAccount)
-    let accountMapping = { ethereum: null, plasma: null }
-    try {
-      const mapping = await mapper.getMappingAsync(ethereumAccount)
-      accountMapping = {
-        ethereum: mapping.from,
-        plasma: mapping.to
-      }
-    } catch (error) {
-      console.error(error)
-      accountMapping = null
-    } finally {
-      mapper.removeAllListeners()
-    }
-    return accountMapping
-  }
-
-  async _createLoomProvider (client, callerAddress) {
-    const dummyKey = CryptoUtils.generatePrivateKey()
-    const publicKey = CryptoUtils.publicKeyFromPrivateKey(dummyKey)
-    const dummyAccount = LocalAddress.fromPublicKey(publicKey).toString()
-    const loomProvider = new LoomProvider(
-      client,
-      dummyKey,
-      () => client.txMiddleware
-    )
-    loomProvider.setMiddlewaresForAddress(callerAddress.local.toString(), client.txMiddleware)
-    loomProvider.callerChainId = callerAddress.chainId
-    // remove dummy account
-    loomProvider.accounts.delete(dummyAccount)
-    loomProvider._accountMiddlewares.delete(dummyAccount)
-    return loomProvider
-  }
-
-  async _setupSigner (plasmaClient, provider) {
-    const signer = getMetamaskSigner(provider)
-    const ethAddress = await signer.getAddress()
-    const callerAddress = new Address('eth', LocalAddress.fromHexString(ethAddress))
-
-    plasmaClient.txMiddleware = [
-      new NonceTxMiddleware(callerAddress, plasmaClient),
-      new SignedEthTxMiddleware(signer)
-    ]
-
-    return callerAddress
-  }
-
-  _loadNetworkConfiguration () {
-    this.extdevConfig = networkConfigs.networks['extdev']
-    this.rinkebyConfig = networkConfigs.networks['rinkeby']
-  }
-
-  _createClient () {
-    const chainId = this.extdevConfig['chainId']
-    const writeUrl = this.extdevConfig['writeUrl']
-    const readUrl = this.extdevConfig['readUrl']
-    const client = new Client(chainId, writeUrl, readUrl)
-    return client
-  }
-
-  async _createNewMapping (signer) {
-    const ethereumAccount = await signer.getAddress()
-    const ethereumAddress = Address.fromString(`eth:${ethereumAccount}`)
-    const plasmaEthSigner = new EthersSigner(signer)
-    const privateKey = CryptoUtils.generatePrivateKey()
-    const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
-    const client = this._createClient()
-    client.txMiddleware = createDefaultTxMiddleware(client, privateKey)
-    const loomAddress = new Address(client.chainId, LocalAddress.fromPublicKey(publicKey))
-
-    const mapper = await AddressMapper.createAsync(client, loomAddress)
-    try {
-      await mapper.addIdentityMappingAsync(
-        ethereumAddress,
-        loomAddress,
-        plasmaEthSigner
-      )
-      client.disconnect()
-    } catch (e) {
-      if (e.message.includes('identity mapping already exists')) {
-      } else {
-        console.error(e)
-      }
-      client.disconnect()
-      return false
-    }
-  }
-
-  async _getContracts (client, web3js, accountMapping) {
-    this.mainNetGatewayContract = await new this.web3js.eth.Contract(
+  async _getContracts (client, web3Ethereum, web3Loom, accountMapping) {
+    this.mainNetGatewayContract = await new web3Ethereum.eth.Contract(
       GatewayJSON.abi,
-      this.extdevConfig['rinkeby2ExtdevGatewayAddress']
+      this._RinkebyGatewayAddress()
     )
-    console.log('mainNetGatewayContract: ', this.mainNetGatewayContract)
-
     this.loomGatewayContract = await Contracts.TransferGateway.createAsync(
       client,
       accountMapping.ethereum
     )
-    console.log('loomGatewayContract: ', this.loomGatewayContract)
-
-    const mainNetCoinContractAddress = MainNetCoinJSON.networks[this.rinkebyConfig['networkId']].address
-    console.log('mainNetCoinContractAddress: ' + mainNetCoinContractAddress)
-    this.mainNetCoinContract = await new this.web3js.eth.Contract(MainNetCoinJSON.abi, mainNetCoinContractAddress)
-    console.log('mainNetCoinContract: ', this.mainNetCoinContract)
-
-    const loomCoinContractAddress = LoomCoinJSON.networks[this.extdevConfig['networkId']].address
-    console.log('loomCoinContractAddress: ' + loomCoinContractAddress)
-    this.loomCoinContract = new this.web3loom.eth.Contract(LoomCoinJSON.abi, loomCoinContractAddress)
-    console.log('loomCoinContract', this.loomCoinContract)
-
-    const networkId = await this.web3js.eth.net.getId()
+    const mainNetCoinContractAddress = MainNetCoinJSON.networks[this.rinkebyNetworkConfig['networkId']].address
+    this.mainNetCoinContract = await new web3Ethereum.eth.Contract(MainNetCoinJSON.abi, mainNetCoinContractAddress)
+    const loomCoinContractAddress = LoomCoinJSON.networks[this.extdevNetworkConfig['networkId']].address
+    this.loomCoinContract = new web3Loom.eth.Contract(LoomCoinJSON.abi, loomCoinContractAddress)
+    const networkId = await web3Ethereum.eth.net.getId()
     let version
     switch (networkId) {
       case 1: // Ethereum Mainnet
@@ -185,7 +59,7 @@ export default class ERC20 {
         throw new Error('Ethereum Gateway is not deployed on network ' + networkId)
     }
 
-    const signer = getMetamaskSigner(this.web3js.currentProvider)
+    const signer = getMetamaskSigner(web3Ethereum.currentProvider)
 
     this.ethereumGatewayContract = await createEthereumGatewayAsync(
       version,
@@ -206,7 +80,7 @@ export default class ERC20 {
       .call({
         from: this.accountMapping.ethereum.local.toString()
       })
-    const balance = this.web3loom.utils.fromWei(loomWei.toString(), 'ether')
+    const balance = this.web3Loom.utils.fromWei(loomWei.toString(), 'ether')
     const limitDecimals = parseFloat(balance).toFixed(2)
     return limitDecimals
   }
@@ -217,17 +91,16 @@ export default class ERC20 {
       .call({
         from: this.accountMapping.ethereum.local.toString()
       })
-    const balance = this.web3js.utils.fromWei(loomWei.toString(), 'ether')
+    const balance = this.web3Ethereum.utils.fromWei(loomWei.toString(), 'ether')
     const limitDecimals = parseFloat(balance).toFixed(2)
     return limitDecimals
   }
 
   async depositERC20 (amount) {
-    const rinkebyGatewayAddress = this.extdevConfig['rinkeby2ExtdevGatewayAddress']
-    const amountInWei = this.web3js.utils.toWei(amount.toString(), 'ether')
-    const mainNetContractAddress = MainNetCoinJSON.networks[this.rinkebyConfig['networkId']].address
+    const rinkebyGatewayAddress = this.extdevNetworkConfig['rinkeby2ExtdevGatewayAddress']
+    const amountInWei = this.web3Ethereum.utils.toWei(amount.toString(), 'ether')
+    const mainNetContractAddress = MainNetCoinJSON.networks[this.rinkebyNetworkConfig['networkId']].address
     const ethAddress = this.accountMapping.ethereum.local.toString()
-    console.log('Calling approve.')
     try {
       await this.mainNetCoinContract
         .methods
@@ -240,7 +113,6 @@ export default class ERC20 {
       console.log('Failed to approve Ethereum Gateway to take the coins.')
       throw error
     }
-    console.log('Calling depositERC20.')
     try {
       await this.mainNetGatewayContract
         .methods
@@ -266,8 +138,8 @@ export default class ERC20 {
   }
 
   async _transferCoinsToLoomGateway (amount) {
-    const amountInWei = this.web3js.utils.toWei(amount.toString(), 'ether')
-    const dAppChainGatewayAddr = this.web3loom.utils.toChecksumAddress(this.extdevConfig['extdev2RinkebyGatewayAddress'])
+    const amountInWei = this.web3Ethereum.utils.toWei(amount.toString(), 'ether')
+    const dAppChainGatewayAddr = this.web3Loom.utils.toChecksumAddress(this.extdevNetworkConfig['extdev2RinkebyGatewayAddress'])
     const ethAddress = this.accountMapping.ethereum.local.toString()
     console.log('Approving Loom Transfer Gateway to take the coins.')
     await this.loomCoinContract.methods
@@ -276,9 +148,9 @@ export default class ERC20 {
 
     const timeout = 60 * 1000
     const ownerMainnetAddr = Address.fromString('eth:' + ethAddress)
-    const loomCoinContractAddress = LoomCoinJSON.networks[this.extdevConfig['networkId']].address
-    const tokenAddress = Address.fromString(this.extdevConfig['chainId'] + ':' + loomCoinContractAddress)
-    const mainNetContractAddress = MainNetCoinJSON.networks[this.rinkebyConfig['networkId']].address
+    const loomCoinContractAddress = LoomCoinJSON.networks[this.extdevNetworkConfig['networkId']].address
+    const tokenAddress = Address.fromString(this.extdevNetworkConfig['chainId'] + ':' + loomCoinContractAddress)
+    const mainNetContractAddress = MainNetCoinJSON.networks[this.rinkebyNetworkConfig['networkId']].address
     const gatewayContract = this.loomGatewayContract
 
     const receiveSignedWithdrawalEvent = new Promise((resolve, reject) => {
@@ -317,8 +189,6 @@ export default class ERC20 {
   }
 
   async _withdrawCoinsFromMainNetGateway (receipt) {
-    // const mainNetContractAddress = MainNetCoinJSON.networks[this.rinkebyConfig['networkId']].address
-    // const ethAddress = this.accountMapping.ethereum.local.toString()
     const gatewayContract = this.ethereumGatewayContract
     const gas = this._gas()
     const tx = await gatewayContract.withdrawAsync(receipt, { gasLimit: gas })
