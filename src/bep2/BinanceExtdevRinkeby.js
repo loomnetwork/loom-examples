@@ -170,7 +170,6 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
     await this.extdevBEP2Contract.methods
       .approve(dAppChainGatewayAddr, amountInt.toString())
       .send({ from: ethAddress })
-
     const timeout = 60 * 1000
     const ownerMainnetAddr = Address.fromString('eth:' + ethAddress)
     const loomCoinContractAddress = extdevBEP2Token.networks[this.extdevNetworkConfig['networkId']].address
