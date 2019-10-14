@@ -170,7 +170,6 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
     await this.extdevBEP2Contract.methods
       .approve(dAppChainGatewayAddr, amountInt.toString())
       .send({ from: ethAddress })
-
     const timeout = 60 * 1000
     const ownerMainnetAddr = Address.fromString('eth:' + ethAddress)
     const loomCoinContractAddress = extdevBEP2Token.networks[this.extdevNetworkConfig['networkId']].address
@@ -198,7 +197,7 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
       }
       gatewayContract.on(Contracts.TransferGateway.EVENT_TOKEN_WITHDRAWAL, listener)
     })
-    await gatewayContract.withdrawERC20Async(
+    const tx = await gatewayContract.withdrawERC20Async(
       amountInt,
       tokenAddress,
       ownerMainnetAddr

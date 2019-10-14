@@ -43,7 +43,6 @@ var sample = new Vue({
       this.rinkebyBep2CoinBalance = data.rinkebyBep2Balance
     },
     updateBNBBalance (data) {
-      console.log('Update BNB Balance')
       this.extdevBnbCoinBalance = data.newBalance
     },
     updateEthBalance (data) {
