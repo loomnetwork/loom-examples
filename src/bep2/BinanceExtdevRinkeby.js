@@ -197,7 +197,7 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
       }
       gatewayContract.on(Contracts.TransferGateway.EVENT_TOKEN_WITHDRAWAL, listener)
     })
-    const tx = await gatewayContract.withdrawERC20Async(
+    await gatewayContract.withdrawERC20Async(
       amountInt,
       tokenAddress,
       ownerMainnetAddr
