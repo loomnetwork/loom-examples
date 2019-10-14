@@ -1,6 +1,6 @@
-const {CryptoUtils} = require('loom-js')
+const { CryptoUtils } = require('loom-js')
 const fs = require('fs')
 
 const privateKey = CryptoUtils.generatePrivateKey()
 const privateKeyString = CryptoUtils.Uint8ArrayToB64(privateKey)
-fs.writeFileSync('./truffle/loom_private_key', privateKeyString)
+fs.writeFileSync('./loom/loom_private_key', privateKeyString)

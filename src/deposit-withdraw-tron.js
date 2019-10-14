@@ -1,5 +1,5 @@
 import { CryptoUtils, Client, LocalAddress, LoomProvider, Contracts, TronWebSigner, Address, createDefaultTxMiddleware } from 'loom-js'
-import erc20abi from '../truffle/build/contracts/TRXToken.json'
+import erc20abi from '../contracts/TRXToken.json'
 import BN from 'bn.js'
 
 const Web3 = require('web3')

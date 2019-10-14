@@ -3,7 +3,7 @@ import {
   Address
 } from 'loom-js'
 import BN from 'bn.js'
-import bnbToken from '../../truffle/build/contracts/BNBToken.json'
+import bnbToken from '../../contracts/BNBToken.json'
 import { BinanceTransferGateway } from 'loom-js/dist/contracts'
 import bech32 from 'bech32'
 import { EventBus } from '../EventBus/EventBus'

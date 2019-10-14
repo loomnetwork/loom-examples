@@ -1,4 +1,5 @@
 import { EventBus } from './EventBus/EventBus'
+import LoomEthCoin from './LoomEthCoin/LoomEthCoin'
 import ERC20 from './ERC20/ERC20'
 const Web3 = require('web3')
 
@@ -29,11 +30,14 @@ var sample = new Vue({
 
     async withdrawERC20 () {
       const amount = 50
+      await this.ethCoin.approveFee()
       await this._ERC20Demo.withdrawERC20(amount)
     },
 
     async depositAndWithdrawERC20Demo () {
       EventBus.$on('updateBalances', this.updateBalance)
+      this.ethCoin = new LoomEthCoin()
+      await this.ethCoin.load(this.web3js)
       this._ERC20Demo = new ERC20()
       this._ERC20Demo.load(this.web3js)
     },
