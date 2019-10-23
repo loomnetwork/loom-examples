@@ -29,7 +29,6 @@ export default class EthSigning {
     const callerAddress = await this._setupSigner(client, ethProvider)
     console.log('callerAddress: ' + callerAddress)
     const loomProvider = await this._createLoomProvider(client, callerAddress)
-    const web3 = new Web3(loomProvider)
     let accountMapping = await this._loadMapping(callerAddress, client)
     if (accountMapping === null) {
       console.log('Create a new mapping')
@@ -44,7 +43,7 @@ export default class EthSigning {
     console.log('mapping.plasma: ' + accountMapping.plasma.toString())
     this.accountMapping = accountMapping
     this.web3js = web3js
-    this.web3loom = web3
+    this.web3loom = new Web3(loomProvider)
     await this._getContract()
     await this._filterEvents()
     await this._setValue()
