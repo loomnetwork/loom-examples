@@ -13,7 +13,7 @@
       "chainId" : "extdev-plasma-us1",
       "networkId": "9545242630824",
       "writeUrl" : "wss://extdev-plasma-us1.dappchains.com/websocket",
-      "readUrl" : "wss://extdev-plasma-us1.dappchains.com/queryws",
+      "readUrl" : "wss://extdev-plasma-us1.dappchains.com/eth",
       "bnbCoinAddress" : "0x9ab4e22d56c0c4f7d494442714c82a605d2f28e0",
       "binanceTransferGatewayAddress": "0xf801deec09eddf70b81e054c2241ece5f49edac2",
       "extdev2RinkebyGatewayAddress": "0xe754d9518bf4a9c63476891ef9AA7d91C8236A5D",
