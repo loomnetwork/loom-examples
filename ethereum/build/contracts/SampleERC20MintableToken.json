@@ -6215,12 +6215,12 @@
         }
       },
       "links": {},
-      "address": "0xd6603ae4ca1d10BAe59b26fFee6118668e140332",
-      "transactionHash": "0x0711c45d3ea17815ec814c217951aa7ae271666425d5b9e3ceb4dd8fa77938ce"
+      "address": "0x4a2c76BC07AB322C864e43C84559A15B82238204",
+      "transactionHash": "0x3b664707affd56c5f6a0f56a89a56c1d474b69a8d94bac9fb34299578d5ad03f"
     }
   },
-  "schemaVersion": "3.0.12",
-  "updatedAt": "2019-10-14T11:20:18.111Z",
+  "schemaVersion": "3.0.9",
+  "updatedAt": "2020-01-06T09:38:39.665Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

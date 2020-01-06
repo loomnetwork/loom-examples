@@ -33,10 +33,6 @@ export default class ERC20 extends UniversalSigning {
   }
 
   async _getContracts (client, web3Ethereum, web3Loom, accountMapping) {
-    this.mainNetGatewayContract = await new web3Ethereum.eth.Contract(
-      GatewayJSON.abi,
-      this._RinkebyGatewayAddress()
-    )
     this.loomGatewayContract = await Contracts.TransferGateway.createAsync(
       client,
       accountMapping.ethereum
@@ -101,6 +97,7 @@ export default class ERC20 extends UniversalSigning {
     const amountInWei = this.web3Ethereum.utils.toWei(amount.toString(), 'ether')
     const mainNetContractAddress = MainNetCoinJSON.networks[this.rinkebyNetworkConfig['networkId']].address
     const ethAddress = this.accountMapping.ethereum.local.toString()
+    const gas = 489362
     try {
       await this.mainNetCoinContract
         .methods
@@ -114,13 +111,11 @@ export default class ERC20 extends UniversalSigning {
       throw error
     }
     try {
-      await this.mainNetGatewayContract
-        .methods
-        .depositERC20(
-          amountInWei,
-          mainNetContractAddress
-        )
-        .send({ from: ethAddress, gas: '489362' })
+      await this.ethereumGatewayContract.depositERC20Async(
+        amountInWei,
+        mainNetContractAddress,
+        { gasLimit: gas }
+      )
     } catch (error) {
       console.log('Failed to transfer coin to the Ethereum Gateway')
       throw error
