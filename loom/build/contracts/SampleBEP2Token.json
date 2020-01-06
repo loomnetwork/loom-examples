@@ -1021,12 +1021,12 @@
         }
       },
       "links": {},
-      "address": "0xAEa85CeD2D2678063220509df59f6cB7b2c59b08",
-      "transactionHash": "0x44a2d62f1e2e743a83589cef2a0488d6300e7839330b286d4db27981d60d887d"
+      "address": "0x4Ee73B04a339FA0A45E9Dfb07ED17cD891Da53Dc",
+      "transactionHash": "0x65e0dde574760663cc64ab604c5cd295256147710414320d8a30e905d77bd260"
     }
   },
   "schemaVersion": "3.0.14",
-  "updatedAt": "2019-10-25T10:42:19.677Z",
+  "updatedAt": "2020-01-06T09:37:26.181Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
