@@ -40,7 +40,6 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
     this._getRinkebyBEP2Contract(web3Ethereum)
     await this._getExtdev2BinanceTransferGatewayContract(client, accountMapping)
     await this._getExtdev2RinkebyGatewayContract(client, accountMapping)
-    await this._getRinkeby2ExtdevGatewayContract(web3Ethereum)
     await this._getEthereumTransferGatewayContract(web3Ethereum)
   }
 
@@ -115,13 +114,6 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
   async _getBinanceTransferGatewayAddress () {
     const contractAddr = await this.client.getContractAddressAsync('binance-gateway')
     return contractAddr.local.toString()
-  }
-
-  async _getRinkeby2ExtdevGatewayContract (web3Ethereum) {
-    this.rinkeby2ExtdevGatewayContract = await new web3Ethereum.eth.Contract(
-      GatewayJSON.abi,
-      this.extdevNetworkConfig['rinkeby2ExtdevGatewayAddress']
-    )
   }
 
   async _getExtdev2RinkebyGatewayContract (client, accountMapping) {
@@ -233,6 +225,7 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
     const rinkebyGatewayAddress = this.extdevNetworkConfig['rinkeby2ExtdevGatewayAddress']
     const rinkebyContractAddress = rinkebyBEP2Token.networks[this.rinkebyNetworkConfig['networkId']].address
     const userRinkebyAddress = this.accountMapping.ethereum.local.toString()
+    const gas = 489362
     EventBus.$emit('updateStatus', { currentStatus: 'Approving the transfer gateway to take the tokens.' })
     try {
       await this.rinkebyBEP2Contract
@@ -247,15 +240,14 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
       throw error
     }
     EventBus.$emit('updateStatus', { currentStatus: 'Depositing to the transfer gateway.' })
-    console.log('Calling depositERC20.')
+    console.log('Calling depositERC20Async.')
     try {
-      await this.rinkeby2ExtdevGatewayContract
-        .methods
-        .depositERC20(
+      await this.ethereumGatewayContract
+        .depositERC20Async(
           amountInt.toString(),
-          rinkebyContractAddress
+          rinkebyContractAddress,
+          { gasLimit: gas }
         )
-        .send({ from: userRinkebyAddress, gas: '489362' })
     } catch (error) {
       console.log('Failed to transfer coin to the Ethereum Gateway')
       throw error
