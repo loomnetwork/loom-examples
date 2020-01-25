@@ -1,12 +1,12 @@
-import LoomEthCoin  from './LoomEthCoin/LoomEthCoin'
+import LoomEthCoin from './LoomEthCoin/LoomEthCoin'
 import { EventBus } from './EventBus/EventBus'
 
-const Web3 = require("web3");
+const Web3 = require('web3')
 
 var sample = new Vue({
-  el: "#eth-deposit-withdraw",
+  el: '#eth-deposit-withdraw',
   data: {
-    info: "Wait a bit until it gets initialized",
+    info: 'Wait a bit until it gets initialized',
     web3js: null,
     loomEthCoinDemo: null
   },
@@ -35,7 +35,7 @@ var sample = new Vue({
         this.web3js = new Web3(window.web3.currentProvider)
         await ethereum.enable()
       } else {
-        alert("Metamask is not Enabled")
+        alert('Metamask is not Enabled')
       }
     }
   },

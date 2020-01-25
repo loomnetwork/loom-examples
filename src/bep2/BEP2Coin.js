@@ -24,7 +24,7 @@ export default class BEP2Coin extends UniversalSigning {
   }
 
   _getLoomUserAddress () {
-    this.loomUserAddress = this.accountMapping.plasma.local.toString()
+    this.loomUserAddress = this.accountMapping.loom.local.toString()
     EventBus.$emit('updateBep2LoomAddress', { loomAddress: this.loomUserAddress })
   }
 

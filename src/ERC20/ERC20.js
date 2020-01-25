@@ -1,4 +1,3 @@
-import GatewayJSON from '../../contracts/Gateway.json'
 import {
   CryptoUtils,
   Address,
@@ -11,7 +10,6 @@ import MainNetCoinJSON from '../../ethereum/build/contracts/MyMainNetCoin.json'
 import LoomCoinJSON from '../../loom/build/contracts/MyLoomCoin.json'
 import { UniversalSigning } from '../UniversalSigning/UniversalSigning'
 
-const Web3 = require('web3')
 const BN = require('bn.js')
 
 export default class ERC20 extends UniversalSigning {
@@ -72,7 +70,7 @@ export default class ERC20 extends UniversalSigning {
 
   async _getLoomBalance () {
     const loomWei = await this.loomCoinContract.methods
-      .balanceOf(this.accountMapping.plasma.local.toString())
+      .balanceOf(this.accountMapping.loom.local.toString())
       .call({
         from: this.accountMapping.ethereum.local.toString()
       })
@@ -134,11 +132,11 @@ export default class ERC20 extends UniversalSigning {
 
   async _transferCoinsToLoomGateway (amount) {
     const amountInWei = this.web3Ethereum.utils.toWei(amount.toString(), 'ether')
-    const dAppChainGatewayAddr = this.web3Loom.utils.toChecksumAddress(this.extdevNetworkConfig['extdev2RinkebyGatewayAddress'])
+    const gatewayAddr = this.web3Loom.utils.toChecksumAddress(this.extdevNetworkConfig['extdev2RinkebyGatewayAddress'])
     const ethAddress = this.accountMapping.ethereum.local.toString()
     console.log('Approving Loom Transfer Gateway to take the coins.')
     await this.loomCoinContract.methods
-      .approve(dAppChainGatewayAddr, amountInWei)
+      .approve(gatewayAddr, amountInWei)
       .send({ from: ethAddress })
 
     const timeout = 60 * 1000
@@ -177,7 +175,7 @@ export default class ERC20 extends UniversalSigning {
   }
 
   async _getWithdrawalReceipt () {
-    const userLocalAddr = Address.fromString(this.accountMapping.plasma.toString())
+    const userLocalAddr = Address.fromString(this.accountMapping.loom.toString())
     const gatewayContract = this.loomGatewayContract
     const receipt = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
     return receipt
@@ -193,13 +191,13 @@ export default class ERC20 extends UniversalSigning {
 
   async resumeWithdrawal () {
     const receipt = await this._getWithdrawalReceipt()
-    if (receipt !== undefined) {
+    if (receipt !== null) {
       await this._withdrawCoinsFromMainNetGateway(receipt)
     }
   }
 
   async _filterEvents () {
-    this.loomCoinContract.events.Transfer({ filter: { address: this.accountMapping.plasma.local.toString() } }, async (err, event) => {
+    this.loomCoinContract.events.Transfer({ filter: { address: this.accountMapping.loom.local.toString() } }, async (err, event) => {
       if (err) console.error('Error on event', err)
       await this._updateBalances()
     })

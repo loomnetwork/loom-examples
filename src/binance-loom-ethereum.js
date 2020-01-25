@@ -5,7 +5,7 @@ import { EventBus } from './EventBus/EventBus'
 
 Vue.use(Toasted)
 
-const Web3 = require("web3");
+const Web3 = require("web3")
 
 var sample = new Vue({
   el: '#binance-loom-ethereum',

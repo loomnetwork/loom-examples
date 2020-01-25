@@ -1369,12 +1369,12 @@
     "9545242630824": {
       "events": {},
       "links": {},
-      "address": "0x1992Cb579E4Fc54Ea06f7bB55D48e8185663aC0E",
-      "transactionHash": "0xccfa2fefa48a704d797f4fdab15618f851bfa4b40f92e6b4aa6026010e76d6d8"
+      "address": "0xA92d088E2158b48dBB670C883fa9Be864959Be11",
+      "transactionHash": "0x481ab7f81549a326fed5b759962a6b1c57db8cc5467ebda22580e98541de77db"
     }
   },
   "schemaVersion": "3.0.14",
-  "updatedAt": "2020-01-06T09:37:26.186Z",
+  "updatedAt": "2020-01-25T06:38:21.228Z",
   "devdoc": {
     "methods": {}
   },

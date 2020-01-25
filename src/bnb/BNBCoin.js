@@ -23,7 +23,7 @@ export default class BNBCoin extends UniversalSigning {
   }
 
   _getLoomUserAddress () {
-    this.loomUserAddress = this.accountMapping.plasma.local.toString()
+    this.loomUserAddress = this.accountMapping.loom.local.toString()
     console.log('this.loomUserAddress: ', this.loomUserAddress)
     EventBus.$emit('loomAddress', { loomAddress: this.loomUserAddress })
   }

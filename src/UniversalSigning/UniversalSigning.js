@@ -51,7 +51,7 @@ export class UniversalSigning {
       console.log('mapping already exists')
     }
     console.log('mapping.ethereum: ' + accountMapping.ethereum.toString())
-    console.log('mapping.plasma: ' + accountMapping.plasma.toString())
+    console.log('mapping.loom: ' + accountMapping.loom.toString())
     this.web3Loom = web3Loom
     this.accountMapping = accountMapping
     this.client = client
@@ -80,12 +80,12 @@ export class UniversalSigning {
     return loomProvider
   }
 
-  async _setupSigner (plasmaClient, provider) {
+  async _setupSigner (loomClient, provider) {
     const signer = getMetamaskSigner(provider)
     const ethAddress = await signer.getAddress()
     const callerAddress = new Address('eth', LocalAddress.fromHexString(ethAddress))
-    plasmaClient.txMiddleware = [
-      new NonceTxMiddleware(callerAddress, plasmaClient),
+    loomClient.txMiddleware = [
+      new NonceTxMiddleware(callerAddress, loomClient),
       new SignedEthTxMiddleware(signer)
     ]
     return callerAddress
@@ -93,12 +93,12 @@ export class UniversalSigning {
 
   async _loadMapping (ethereumAccount, client) {
     const mapper = await AddressMapper.createAsync(client, ethereumAccount)
-    let accountMapping = { ethereum: null, plasma: null }
+    let accountMapping = { ethereum: null, loom: null }
     try {
       const mapping = await mapper.getMappingAsync(ethereumAccount)
       accountMapping = {
         ethereum: mapping.from,
-        plasma: mapping.to
+        loom: mapping.to
       }
     } catch (error) {
       console.error(error)
@@ -112,7 +112,7 @@ export class UniversalSigning {
   async _createNewMapping (signer) {
     const ethereumAccount = await signer.getAddress()
     const ethereumAddress = Address.fromString(`eth:${ethereumAccount}`)
-    const plasmaEthSigner = new EthersSigner(signer)
+    const loomEthSigner = new EthersSigner(signer)
     const privateKey = CryptoUtils.generatePrivateKey()
     const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
     const client = this._createClient()
@@ -123,7 +123,7 @@ export class UniversalSigning {
       await mapper.addIdentityMappingAsync(
         ethereumAddress,
         loomAddress,
-        plasmaEthSigner
+        loomEthSigner
       )
       client.disconnect()
     } catch (e) {

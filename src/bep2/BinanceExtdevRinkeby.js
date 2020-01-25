@@ -12,11 +12,9 @@ import rinkebyBEP2Token from '../../ethereum/build/contracts/SampleERC20Mintable
 import { BinanceTransferGateway } from 'loom-js/dist/contracts'
 import bech32 from 'bech32'
 import { EventBus } from '../EventBus/EventBus'
-import GatewayJSON from '../../contracts/Gateway.json'
 import { UniversalSigning } from '../UniversalSigning/UniversalSigning'
 
 export default class BinanceExtdevRinkeby extends UniversalSigning {
-
   _gas () {
     return 350000
   }
@@ -44,7 +42,7 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
   }
 
   _getExtdevUserAddress (accountMapping) {
-    this.extdevUserAddress = accountMapping.plasma.local.toString()
+    this.extdevUserAddress = accountMapping.loom.local.toString()
     EventBus.$emit('updateExtdevUserAddress', { extdevUserAddress: this.extdevUserAddress })
   }
 
@@ -157,10 +155,10 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
   async _transferCoinsToExtdevGateway (amount) {
     const multiplier = new BN(100000000, 10)
     const amountInt = (new BN(parseInt(amount), 10)).mul(multiplier)
-    const dAppChainGatewayAddr = this.extdevNetworkConfig['extdev2RinkebyGatewayAddress']
+    const gatewayAddr = this.extdevNetworkConfig['extdev2RinkebyGatewayAddress']
     const ethAddress = this.accountMapping.ethereum.local.toString()
     await this.extdevBEP2Contract.methods
-      .approve(dAppChainGatewayAddr, amountInt.toString())
+      .approve(gatewayAddr, amountInt.toString())
       .send({ from: ethAddress })
     const timeout = 60 * 1000
     const ownerMainnetAddr = Address.fromString('eth:' + ethAddress)
@@ -198,7 +196,7 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
   }
 
   async _getWithdrawalReceipt () {
-    const userLocalAddr = Address.fromString(this.accountMapping.plasma.toString())
+    const userLocalAddr = Address.fromString(this.accountMapping.loom.toString())
     const gatewayContract = this.extdev2RinkebyGatewayContract
     const receipt = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
     return receipt
@@ -214,7 +212,7 @@ export default class BinanceExtdevRinkeby extends UniversalSigning {
 
   async resumeWithdrawal () {
     const receipt = await this._getWithdrawalReceipt()
-    if (receipt !== undefined) {
+    if (receipt !== null) {
       await this._withdrawCoinsFromRinkebyGateway(receipt)
     }
   }

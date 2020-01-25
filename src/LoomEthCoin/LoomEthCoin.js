@@ -1,6 +1,5 @@
 import GatewayJSON from '../../contracts/Gateway.json'
 import {
-  CryptoUtils,
   Address,
   Contracts,
   createEthereumGatewayAsync,
@@ -96,7 +95,6 @@ export default class LoomEthCoin extends UniversalSigning {
   async _transferEthToLoomGateway (amount) {
     console.log('transfer eth to loom gateway')
     const ownerAddr = this.accountMapping.ethereum
-    const loomGatewayAddr = Address.fromString(this.loomGatewayContract.address.toString())
     const rinkebyGatewayAddr = Address.fromString(`eth:${this._RinkebyGatewayAddress().toString()}`)
     const timeout = 60 * 1000
     const receiveSignedWithdrawalEvent = new Promise((resolve, reject) => {
@@ -119,12 +117,12 @@ export default class LoomEthCoin extends UniversalSigning {
     })
     const rinkebyGatewayAddress = Address.fromString(`eth:${this._RinkebyGatewayAddress()}`)
     await this.loomGatewayContract.withdrawETHAsync(new BN(amount), rinkebyGatewayAddress, ownerAddr)
-    console.log(`${amount.toString()} wei deposited to DAppChain Gateway...`)
+    console.log(`${amount.toString()} wei deposited to the Gateway...`)
     await receiveSignedWithdrawalEvent
   }
 
   async _getWithdrawalReceipt () {
-    const userLocalAddr = this.accountMapping.plasma
+    const userLocalAddr = this.accountMapping.loom
     const gatewayContract = this.loomGatewayContract
     const receipt = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
     return receipt
@@ -133,7 +131,6 @@ export default class LoomEthCoin extends UniversalSigning {
   async _withdrawEthFromMainNetGateway (receipt) {
     console.log('withdrawing from mainnet gateway')
     const gatewayContract = this.ethereumGatewayContract
-    const ethereumAddress = this.accountMapping.ethereum.local.toString()
     const gas = this._gas()
     const tx = await gatewayContract.withdrawAsync(receipt, { gasLimit: gas })
     console.log(tx)
@@ -143,15 +140,17 @@ export default class LoomEthCoin extends UniversalSigning {
     await this._approveGatewayToTakeEth(amount)
     await this._transferEthToLoomGateway(amount)
     const receipt = await this._getWithdrawalReceipt()
-    if (receipt !== undefined) {
+    if (receipt !== null) {
       await this._withdrawEthFromMainNetGateway(receipt)
     }
   }
 
   async resumeWithdrawal () {
     const receipt = await this._getWithdrawalReceipt()
-    if (receipt !== undefined) {
+    if (receipt !== null) {
       await this._withdrawEthFromMainNetGateway(receipt)
+    } else {
+      console.log('No pending withdrawal.')
     }
   }
 
@@ -167,7 +166,7 @@ export default class LoomEthCoin extends UniversalSigning {
   }
 
   async _getLoomBalance () {
-    const loomAddress = Address.fromString(this.accountMapping.plasma.toString())
+    const loomAddress = Address.fromString(this.accountMapping.loom.toString())
     const wei = await this.ethCoin.getBalanceOfAsync(loomAddress)
     return this.web3Loom.utils.fromWei(wei.toString(), 'ether')
   }
