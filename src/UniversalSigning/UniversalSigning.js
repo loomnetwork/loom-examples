@@ -48,7 +48,7 @@ export class UniversalSigning {
       accountMapping = await this._loadMapping(callerAddress, client)
       console.log(accountMapping)
     } else {
-      console.log('mapping already exists')
+      console.log('Mapping already exists')
     }
     console.log('mapping.ethereum: ' + accountMapping.ethereum.toString())
     console.log('mapping.loom: ' + accountMapping.loom.toString())
