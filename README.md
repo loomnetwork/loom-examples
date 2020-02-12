@@ -1,10 +1,16 @@
 # Loom Examples
 
-This repository holds a few example projects.
+This repository holds a few example projects:
 
-##  Universal Signing Demos
+* Universal signing demo
+* Deposit and withdraw ETH between Ethereum and Basechain
+* Deposit and withdraw ERC20 tokens between Ethereum and Basechain
+* Deposit and withdraw TRX between Tron and Basechain
+* Deposit and withdraw BNB tokens between Binance chain and Basechain
+* Deposit and withdraw BEP2 tokens between Binance chain and Basechain
+* Move tokens between Binance chain, Basechain, and Ethereum
 
-The simple universal signing demos show how Loom universal signing works.
+##  Universal signing demo
 
 ### Install
 
@@ -26,7 +32,23 @@ Then, we can migrate the the `SimpleStore` smart contract:
 npm run migrate:loom
 ```
 
-### Start the web server
+### Start the webserver
+
+```bash
+npm run start
+```
+
+Open [http://localhost:8080/](http://localhost:8080/) in your favorite browser.
+
+## Deposit and withdraw ETH between Ethereum and Basechain
+
+### Install
+
+```bash
+npm install
+```
+
+### Start the webserver
 
 ```bash
 npm run start
@@ -35,7 +57,13 @@ npm run start
 Open [http://localhost:8080/](http://localhost:8080/) in your favorite browser.
 
 
-## ERC20 Demo
+## Deposit and withdraw ERC20 tokens between Ethereum and Basechain
+
+### Install
+
+```bash
+npm install
+```
 
 ### Generate Loom private key
 
@@ -79,8 +107,7 @@ This will give all tokens to the address that created the contract. So, you eith
 npm run map:contracts
 ```
 
-
-### Start the web server
+### Start the webserver
 
 ```bash
 npm run start
@@ -88,36 +115,18 @@ npm run start
 
 Open [http://localhost:8080/](http://localhost:8080/) in your favorite browser.
 
+## Deposit and withdraw TRX between Tron and Basechain
 
-## BNB Demo
+See the [Deposit and Withdraw TRX](https://loomx.io/developers/en/deposit-and-withdraw-trx.html) page for more details
 
-Fire up a terminal, `cd` into your directory of choice, and run the following command:
-
-```bash
-git clone https://github.com/loomnetwork/loom-examples
-```
-
-This will download the repository into a new directory called `loom-examples`. Let's `cd` into it and install the dependencies:
-
-```bash
-cd loom-examples
-npm install
-```
-
-Spin up the demo project with:
-
-```bash
-npm run start
-```
+## Deposit and withdraw BNB tokens between Binance chain and Basechain
 
 See the [Deposit and Withdraw BNB](https://loomx.io/developers/en/deposit-and-withdraw-bnb.html) page for more details.
 
-
-## BEP2 Demo
+## Deposit and withdraw BEP2 tokens between Binance chain and Basechain
 
 See the [Deposit and Withdraw BEP2](https://loomx.io/developers/en/deposit-and-withdraw-bep2.html) page for instructions on how to run this demo.
 
 ## Move Tokens between Binance, Loom, and Ethereum
 
 See the [Move Tokens between Binance, Loom, and Ethereum](https://loomx.io/developers/en/binance-loom-ethereum.html) page for instructions on how to run this demo.
-
