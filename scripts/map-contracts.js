@@ -9,6 +9,8 @@ const ExtdevBEP2CoinJSON = require('../loom/build/contracts/SampleBEP2Token.json
 const RinkebyBEP2CoinJSON = require('../ethereum/build/contracts/SampleERC20MintableToken.json')
 const RinkebyStandardCoinJSON = require('../ethereum/build/contracts/MyMainNetCoin.json')
 const ExtdevStandardCoinJSON = require('../loom/build/contracts/MyLoomCoin.json')
+const RinkebyStandardTokenJSON = require('../ethereum/build/contracts/MyMainNetToken.json')
+const ExtdevStandardTokenJSON = require('../loom/build/contracts/MyLoomToken.json')
 const extdevChainId = 'extdev-plasma-us1'
 const { OfflineWeb3Signer } = require('loom-js/dist/solidity-helpers')
 const TransferGateway = Contracts.TransferGateway
@@ -40,7 +42,7 @@ class ContractsMapper {
 
   _loadRinkebyAccount () {
     const privateKey = fs.readFileSync(path.join(__dirname, '../rinkeby_private_key'), 'utf-8')
-    const web3js = new Web3(`https://rinkeby.infura.io/${process.env.INFURA_API_KEY}`)
+    const web3js = new Web3(`https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`)
     const ownerAccount = web3js.eth.accounts.privateKeyToAccount('0x' + privateKey)
     web3js.eth.accounts.wallet.add(ownerAccount)
     return { account: ownerAccount, web3js }
@@ -49,26 +51,26 @@ class ContractsMapper {
   async _addContractMapping ({
     client,
     signer,
-    tokenRinkebyAddress,
-    tokenExtdevAddress,
+    contractRinkebyAddress,
+    contractExtdevAddress,
     ownerExtdevAddress,
-    rinkebyTxHash
+    contractRinkebyTxHash
   }) {
-    console.log('tokenRinkebyAddress: ' + tokenRinkebyAddress)
-    console.log('tokenExtdevAddress: ' + tokenExtdevAddress)
+    console.log('tokenRinkebyAddress: ' + contractRinkebyAddress)
+    console.log('tokenExtdevAddress: ' + contractExtdevAddress)
     console.log('ownerExtdevAddress: ' + ownerExtdevAddress)
     const ownerExtdevAddr = Address.fromString(`${client.chainId}:${ownerExtdevAddress}`)
     const gatewayContract = await TransferGateway.createAsync(client, ownerExtdevAddr)
-    const foreignContract = Address.fromString(`eth:${tokenRinkebyAddress}`)
-    const localContract = Address.fromString(`${client.chainId}:${tokenExtdevAddress}`)
+    const foreignContract = Address.fromString(`eth:${contractRinkebyAddress}`)
+    const localContract = Address.fromString(`${client.chainId}:${contractExtdevAddress}`)
 
     const hash = soliditySha3(
-      { type: 'address', value: tokenRinkebyAddress.slice(2) },
-      { type: 'address', value: tokenExtdevAddress.slice(2) }
+      { type: 'address', value: contractRinkebyAddress.slice(2) },
+      { type: 'address', value: contractExtdevAddress.slice(2) }
     )
 
     const foreignContractCreatorSig = await signer.signAsync(hash)
-    const foreignContractCreatorTxHash = Buffer.from(rinkebyTxHash.slice(2), 'hex')
+    const foreignContractCreatorTxHash = Buffer.from(contractRinkebyTxHash.slice(2), 'hex')
     try {
       await gatewayContract.addContractMappingAsync({
         localContract,
@@ -96,10 +98,10 @@ class BEP2ContractsMapper extends ContractsMapper {
     await this._addContractMapping({
       client,
       signer,
-      tokenRinkebyAddress,
-      tokenExtdevAddress,
+      contractRinkebyAddress: tokenRinkebyAddress,
+      contractExtdevAddress: tokenExtdevAddress,
       ownerExtdevAddress: extdev.account,
-      rinkebyTxHash
+      contractRinkeby: rinkebyTxHash
     })
     client.disconnect()
   }
@@ -112,17 +114,28 @@ class StandardContractsMapper extends ContractsMapper {
     const client = extdev.client
     const rinkebyNetworkId = await rinkeby.web3js.eth.net.getId()
     const extdevNetworkId = await extdev.web3js.eth.net.getId()
-    const tokenRinkebyAddress = RinkebyStandardCoinJSON.networks[rinkebyNetworkId].address
-    const rinkebyTxHash = RinkebyStandardCoinJSON.networks[rinkebyNetworkId].transactionHash
-    const tokenExtdevAddress = ExtdevStandardCoinJSON.networks[extdevNetworkId].address
+    const coinRinkebyAddress = RinkebyStandardCoinJSON.networks[rinkebyNetworkId].address
+    const coinRinkebyTxHash = RinkebyStandardCoinJSON.networks[rinkebyNetworkId].transactionHash
+    const coinExtdevAddress = ExtdevStandardCoinJSON.networks[extdevNetworkId].address
+    const tokenRinkebyAddress = RinkebyStandardTokenJSON.networks[rinkebyNetworkId].address
+    const tokenRinkebyTxHash = RinkebyStandardTokenJSON.networks[rinkebyNetworkId].transactionHash
+    const tokenExtdevAddress = ExtdevStandardTokenJSON.networks[extdevNetworkId].address
     const signer = new OfflineWeb3Signer(rinkeby.web3js, rinkeby.account)
     await this._addContractMapping({
       client,
       signer,
-      tokenRinkebyAddress,
-      tokenExtdevAddress,
+      contractRinkebyAddress: coinRinkebyAddress,
+      contractExtdevAddress: coinExtdevAddress,
       ownerExtdevAddress: extdev.account,
-      rinkebyTxHash
+      contractRinkebyTxHash: coinRinkebyTxHash
+    })
+    await this._addContractMapping({
+      client,
+      signer,
+      contractRinkebyAddress: tokenRinkebyAddress,
+      contractExtdevAddress: tokenExtdevAddress,
+      ownerExtdevAddress: extdev.account,
+      contractRinkebyTxHash: tokenRinkebyTxHash
     })
     client.disconnect()
   }

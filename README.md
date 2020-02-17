@@ -56,7 +56,6 @@ npm run start
 
 Open [http://localhost:8080/](http://localhost:8080/) in your favorite browser.
 
-
 ## Deposit and withdraw ERC20 tokens between Ethereum and Basechain
 
 ### Install
@@ -99,7 +98,66 @@ Next, just run:
 npm run migrate:rinkeby
 ```
 
-This will give all tokens to the address that created the contract. So, you either import this account in Metamask or transfer the newly minted tokens to your account.
+This will give all tokens to the address that deployed the contract. So, you either import this account in Metamask or transfer the newly minted tokens to your account.
+
+### Map Contracts
+
+```bash
+npm run map:contracts
+```
+
+### Start the webserver
+
+```bash
+npm run start
+```
+
+Open [http://localhost:8080/](http://localhost:8080/) in your favorite browser.
+
+
+## Deposit and withdraw ERC721 tokens between Ethereum and Basechain
+
+### Install
+
+```bash
+npm install
+```
+
+### Generate Loom private key
+
+```bash
+npm run gen:loom-key
+```
+
+### Generate Rinkeby private key
+
+```bash
+npm run gen:rinkeby-key
+```
+
+### Deploy to Loom
+
+```bash
+npm run migrate:loom
+```
+
+### Set Infura API KEY
+
+```bash
+export INFURA_API_KEY=YOUR INFURA API KEY
+```
+
+### Deploy to Rinkeby
+
+First, get yourself some Ethers to pay for the deployment. Head over to [this page](https://faucet.rinkeby.io/) and follow the instructions.
+
+Next, just run:
+
+```
+npm run migrate:rinkeby
+```
+
+This will mint a token and give it to the address that deployed the contract. So, you either import this account into Metamask or transfer the newly minted token to your account.
 
 ### Map Contracts
 

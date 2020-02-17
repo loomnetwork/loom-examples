@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> Deposit and Withdraw ERC721 </title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="shortcut icon" href="#" />
+    <!-- Load polyfills to support older browsers -->
+    <script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CMutationObserver" crossorigin="anonymous"></script>
+    <!-- Load Vue followed by BootstrapVue -->
+    <script src="//unpkg.com/vue@latest/dist/vue.min.js"></script>
+    <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+
+</head>
+<body>
+    <div id="erc721-deposit-withdraw">
+        <b-button id="deposit" variant="outline-primary" v-on:click.prevent="depositERC721">Deposit Token</b-button>
+        <b-button id ="withdraw" variant="outline-primary" v-on:click.prevent="withdrawERC721">Withdraw Token</b-button>
+        <b-button id ="resume" variant="outline-primary" v-on:click.prevent="resumeWithdrawal">Resume Withdrawal</b-button>
+        <b-alert variant="info" show>{{ info }}</b-alert>
+    </div>
+
+</body>
+</html>

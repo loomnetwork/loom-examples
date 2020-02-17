@@ -9,6 +9,7 @@ module.exports = {
     ethsigning: ['babel-polyfill', './src/eth-signing.js'],
     depositwithdraweth: ['babel-polyfill', './src/deposit-withdraw-eth.js'],
     depositwithdrawerc20: ['babel-polyfill', './src/deposit-withdraw-erc20.js'],
+    depositwithdrawerc721: ['babel-polyfill', './src/deposit-withdraw-erc-721.js'],
     depositwithdrawtron: ['babel-polyfill', './src/deposit-withdraw-tron.js'],
     ethsigningportis: ['babel-polyfill', './src/eth-signing-portis.js'],
     ethsigningfortmatic: ['babel-polyfill', './src/eth-signing-fortmatic.js'],
@@ -44,6 +45,12 @@ module.exports = {
       inject: true,
       chunks: ['depositwithdrawerc20'],
       filename: 'deposit-withdraw-erc20.html'
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/deposit-withdraw-erc-721.html',
+      inject: true,
+      chunks: ['depositwithdrawerc721'],
+      filename: 'deposit-withdraw-erc-721.html'
     }),
     new HtmlWebpackPlugin({
       template: './src/deposit-withdraw-tron.html',
