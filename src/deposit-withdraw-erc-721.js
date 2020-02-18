@@ -9,7 +9,7 @@ var sample = new Vue({
   el: '#erc721-deposit-withdraw',
   data: {
     info: 'Wait a bit until it gets initialized',
-    web3js: null,
+    web3js: null
 
   },
   methods: {
