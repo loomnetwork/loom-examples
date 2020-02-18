@@ -97,30 +97,33 @@ export default class ERC721 extends UniversalSigning {
   async depositERC721 (tokenId) {
     const rinkebyGatewayAddress = this.extdevNetworkConfig['rinkeby2ExtdevGatewayAddress']
     const ethAddress = this.accountMapping.ethereum.local.toString()
+    EventBus.$emit('updateStatus', { currentStatus: 'Estimating gas cost.' })
     const gasEstimate = await this.mainNetTokenContract.methods.depositToGateway(rinkebyGatewayAddress, tokenId).estimateGas({ from: ethAddress })
     if (gasEstimate === this._gas()) {
       throw new Error('Not enough enough gas, send more.')
     }
     EventBus.$emit('updateBalances', { mainNetBalance: 0, loomBalance: 0 })
+    EventBus.$emit('updateStatus', { currentStatus: 'Depositing tokens to gateway.' })
     return this.mainNetTokenContract.methods.depositToGateway(rinkebyGatewayAddress, tokenId).send({ from: ethAddress, gas: gasEstimate })
   }
 
   async withdrawERC721 (tokenId) {
-    console.log('Transferring to Loom Gateway.')
+    EventBus.$emit('updateStatus', { currentStatus: 'Transferring to Loom Gateway.' })
     await this._transferTokensToLoomGateway(tokenId)
-    console.log('Getting withdrawal receipt')
+    EventBus.$emit('updateStatus', { currentStatus: 'Getting withdrawal receipt' })
     const receipt = await this._getWithdrawalReceipt()
-    console.log('Withdrawing from MainNet Gateway')
+    EventBus.$emit('updateStatus', { currentStatus: 'Withdrawing from MainNet Gateway' })
     await this._withdrawTokensFromMainNetGateway(receipt)
   }
 
   async _transferTokensToLoomGateway (tokenId) {
     const gatewayAddr = this.web3Loom.utils.toChecksumAddress(this.extdevNetworkConfig['extdev2RinkebyGatewayAddress'])
     const ethAddress = this.accountMapping.ethereum.local.toString()
-    console.log('Approving Loom Transfer Gateway to take the token.')
+    EventBus.$emit('updateStatus', { currentStatus: 'Approving Loom Transfer Gateway to take the token.' })
     await this.loomTokenContract.methods
       .approve(gatewayAddr, tokenId)
       .send({ from: ethAddress })
+    EventBus.$emit('updateStatus', { currentStatus: 'Waiting for withdrawal to be signed.' })
     const timeout = 60 * 1000
     const ownerMainnetAddr = Address.fromString('eth:' + ethAddress)
     const loomTokenContractAddress = LoomTokenJSON.networks[this.extdevNetworkConfig['networkId']].address
@@ -154,20 +157,24 @@ export default class ERC721 extends UniversalSigning {
       ownerMainnetAddr
     )
     await receiveSignedWithdrawalEvent
+    EventBus.$emit('updateStatus', { currentStatus: 'Withdrawal signed.' })
   }
 
   async _getWithdrawalReceipt () {
     const userLocalAddr = Address.fromString(this.accountMapping.loom.toString())
     const gatewayContract = this.loomGatewayContract
+    EventBus.$emit('updateStatus', { currentStatus: 'Getting withdrawal receipt.' })
     const receipt = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
+    EventBus.$emit('updateStatus', { currentStatus: 'Got withdrawal receipt.' })
     return receipt
   }
 
   async _withdrawTokensFromMainNetGateway (receipt) {
     const gatewayContract = this.ethereumGatewayContract
     const gas = this._gas()
+    EventBus.$emit('updateStatus', { currentStatus: 'Withdraing tokens from the Rinkeby Gateway.' })
     const tx = await gatewayContract.withdrawAsync(receipt, { gasLimit: gas })
-    console.log(`Tokens withdrawn from MainNet Gateway.`)
+    EventBus.$emit('updateStatus', { currentStatus: `Tokens withdrawn from Rinkeby Gateway.` })
     console.log(`Rinkeby tx hash: ${tx.hash}`)
     EventBus.$emit('updateBalances', { mainNetBalance: 0, loomBalance: 0 })
   }
@@ -175,9 +182,11 @@ export default class ERC721 extends UniversalSigning {
   async resumeWithdrawal () {
     const receipt = await this._getWithdrawalReceipt()
     if (receipt !== null) {
+      EventBus.$emit('updateStatus', { currentStatus: 'Withdraing tokens from the Rinkeby Gateway.' })
       await this._withdrawTokensFromMainNetGateway(receipt)
+      EventBus.$emit('updateStatus', { currentStatus: 'Tokens withdrawn from the Rinkeby Gateway.' })
     } else {
-      console.log('No withdrawal receipt exists.')
+      EventBus.$emit('updateStatus', { currentStatus: 'No withdrawal receipt exists.' })
     }
   }
 }

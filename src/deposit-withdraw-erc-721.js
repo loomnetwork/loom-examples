@@ -3,6 +3,8 @@ import LoomEthCoin from './LoomEthCoin/LoomEthCoin'
 import ERC721 from './ERC721/ERC721'
 const Web3 = require('web3')
 
+Vue.use(Toasted)
+
 var sample = new Vue({
   el: '#erc721-deposit-withdraw',
   data: {
@@ -38,6 +40,24 @@ var sample = new Vue({
       }
     },
 
+    async _makeToast (data) {
+      Vue.toasted.show(data, {
+        duration: 4000,
+        type: 'info',
+        action: {
+          text: 'Dismiss',
+          onClick: (e, toast) => {
+            toast.goAway(0)
+          }
+        }
+      })
+    },
+
+    async updateStatus (data) {
+      const currentStatus = data.currentStatus
+      this._makeToast(currentStatus)
+    },
+
     async updateBalance (data) {
       await this._ERC721Demo._updateBalances()
       const loomBalance = data.loomBalance
@@ -70,6 +90,7 @@ var sample = new Vue({
 
     async depositAndWithdrawERC721Demo () {
       EventBus.$on('updateBalances', this.updateBalance)
+      EventBus.$on('updateStatus', this.updateStatus)
       this.ethCoin = new LoomEthCoin()
       await this.ethCoin.load(this.web3js)
       this._ERC721Demo = new ERC721()
