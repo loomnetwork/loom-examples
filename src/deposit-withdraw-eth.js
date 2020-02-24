@@ -21,10 +21,10 @@ var sample = new Vue({
       this.info = 'Rinkeby balance: ' + data.mainNetBalance + ', Extdev balance: ' + data.loomBalance
     },
     async depositEth () {
-      this.loomEthCoinDemo.depositEth(5000000)
+      this.loomEthCoinDemo.depositEth(this.web3js.utils.toWei('0.2', 'ether'))
     },
     async withdrawEth () {
-      this.loomEthCoinDemo.withdrawEth(500000)
+      this.loomEthCoinDemo.withdrawEth(this.loomEthCoinDemo.depositEth(this.web3js.utils.toWei('0.001', 'ether')))
     },
     async resumeWithdrawal () {
       this.loomEthCoinDemo.resumeWithdrawal()

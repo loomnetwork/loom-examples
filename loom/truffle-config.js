@@ -13,7 +13,9 @@ module.exports = {
         const chainId = 'extdev-plasma-us1'
         const writeUrl = 'wss://extdev-plasma-us1.dappchains.com/websocket'
         const readUrl = 'wss://extdev-plasma-us1.dappchains.com/queryws'
-        return new LoomTruffleProvider(chainId, writeUrl, readUrl, privateKey)
+        const loomTruffleProvider = new LoomTruffleProvider(chainId, writeUrl, readUrl, privateKey)
+        loomTruffleProvider.createExtraAccountsFromMnemonic('gravity top burden flip student usage spell purchase hundred improve check genre', 10)
+        return loomTruffleProvider
       },
       network_id: '9545242630824'
     },
