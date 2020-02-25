@@ -45,8 +45,8 @@ function filterEvents (payableDemoContract, web3js) {
   payableDemoContract.events.WithdrawFunds(async (err, event) => {
     if (err) console.error('Error on event', err)
     const owner = event.returnValues.owner
-    const amount = event.returnValues.amount
-    console.log(owner + ' has withdrawn ' + web3js.utils.fromWei(amount.toString(), 'ether') + ' ETH.')
+    const balance = event.returnValues.balance
+    console.log(owner + ' has withdrawn ' + web3js.utils.fromWei(balance.toString(), 'ether') + ' ETH.')
   })
 }
 
