@@ -11,10 +11,10 @@ contract PayableDemo is Ownable {
     emit BuySomething(msg.sender);
   }
   function withdrawFunds() public onlyOwner {
-   uint amount = address(this).balance;
-   require(amount > 0, "Balance should be > 0.");
+   uint balance = address(this).balance;
+   require(balance > 0, "Balance should be > 0.");
    address payable ownerPayable = address(uint160(owner()));
-   ownerPayable.transfer(amount);
-   emit WithdrawFunds(msg.sender, amount);
+   ownerPayable.transfer(balance);
+   emit WithdrawFunds(msg.sender, balance);
   }
 }
