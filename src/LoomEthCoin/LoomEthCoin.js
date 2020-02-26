@@ -29,7 +29,9 @@ export default class LoomEthCoin extends UniversalSigning {
     this.web3Loom = web3Loom
     this.client = client
     await this._getContracts(client, accountMapping)
-    await this._updateBalances()
+    setInterval(async () => {
+      await this._updateBalances()
+    }, 2000)
   }
 
   async _getContracts (client, accountMapping) {
@@ -124,7 +126,6 @@ export default class LoomEthCoin extends UniversalSigning {
     const userLocalAddr = this.accountMapping.loom
     const gatewayContract = this.loomGatewayContract
     const receipt = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
-    console.log(receipt)
     return receipt
   }
 
