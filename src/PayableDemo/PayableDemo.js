@@ -9,7 +9,7 @@ import PayableDemoJSON from '../../loom/build/contracts/PayableDemo.json'
 
 const EthCoin = Contracts.EthCoin
 
-export default class LoomEthCoin extends UniversalSigning {
+export default class PayableDemo extends UniversalSigning {
 
   async load (web3Ethereum) {
     this.extdevNetworkConfig = networkConfigs.networks['extdev']
