@@ -24,7 +24,7 @@ var sample = new Vue({
       this.loomEthCoinDemo.depositEth(this.web3js.utils.toWei('0.2', 'ether'))
     },
     async withdrawEth () {
-      this.loomEthCoinDemo.withdrawEth(this.loomEthCoinDemo.depositEth(this.web3js.utils.toWei('0.001', 'ether')))
+      this.loomEthCoinDemo.withdrawEth(this.web3js.utils.toWei('0.001', 'ether'))
     },
     async resumeWithdrawal () {
       this.loomEthCoinDemo.resumeWithdrawal()

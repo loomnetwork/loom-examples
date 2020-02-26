@@ -86,14 +86,13 @@ export default class LoomEthCoin extends UniversalSigning {
   }
 
   async _approveGatewayToTakeEth (amount) {
-    console.log('Approving the gateway to take the eth')
+    console.log('Approving the gateway to take the ETH.')
     const totalAmount = amount + this._gas()
     const gatewayAddress = Address.fromString(this.loomGatewayContract.address.toString())
     await this.ethCoin.approveAsync(gatewayAddress, new BN(totalAmount))
   }
 
   async _transferEthToLoomGateway (amount) {
-    console.log('transfer eth to loom gateway')
     const ownerAddr = this.accountMapping.ethereum
     const rinkebyGatewayAddr = Address.fromString(`eth:${this._RinkebyGatewayAddress().toString()}`)
     const timeout = 60 * 1000
@@ -125,11 +124,12 @@ export default class LoomEthCoin extends UniversalSigning {
     const userLocalAddr = this.accountMapping.loom
     const gatewayContract = this.loomGatewayContract
     const receipt = await gatewayContract.withdrawalReceiptAsync(userLocalAddr)
+    console.log(receipt)
     return receipt
   }
 
   async _withdrawEthFromMainNetGateway (receipt) {
-    console.log('withdrawing from mainnet gateway')
+    console.log('Withdrawing from the Ethereum gateway.')
     const gatewayContract = this.ethereumGatewayContract
     const gas = this._gas()
     const tx = await gatewayContract.withdrawAsync(receipt, { gasLimit: gas })
@@ -150,7 +150,7 @@ export default class LoomEthCoin extends UniversalSigning {
     if (receipt !== null) {
       await this._withdrawEthFromMainNetGateway(receipt)
     } else {
-      console.log('No pending withdrawal.')
+      console.log('No pending withdrawals.')
     }
   }
 
