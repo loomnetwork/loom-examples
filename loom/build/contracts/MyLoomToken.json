@@ -449,7 +449,7 @@
         "id": 260,
         "nodeType": "ImportDirective",
         "scope": 299,
-        "sourceUnit": 2385,
+        "sourceUnit": 2378,
         "src": "25:69:3",
         "symbolAliases": [],
         "unitAlias": ""
@@ -463,10 +463,10 @@
               "id": 261,
               "name": "ERC721Full",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 2384,
+              "referencedDeclaration": 2377,
               "src": "120:10:3",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC721Full_$2384",
+                "typeIdentifier": "t_contract$_ERC721Full_$2377",
                 "typeString": "contract ERC721Full"
               }
             },
@@ -476,15 +476,15 @@
           }
         ],
         "contractDependencies": [
-          710,
-          720,
-          2023,
-          2360,
-          2384,
-          2513,
-          2616,
-          2643,
-          2666
+          703,
+          713,
+          2016,
+          2353,
+          2377,
+          2506,
+          2609,
+          2636,
+          2659
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -492,15 +492,15 @@
         "id": 298,
         "linearizedBaseContracts": [
           298,
-          2384,
-          2513,
-          2666,
-          2360,
-          2643,
-          2023,
-          2616,
-          710,
-          720
+          2377,
+          2506,
+          2659,
+          2353,
+          2636,
+          2016,
+          2609,
+          703,
+          713
         ],
         "name": "MyLoomToken",
         "nodeType": "ContractDefinition",
@@ -637,10 +637,10 @@
                   "name": "ERC721Full",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 2384,
+                  "referencedDeclaration": 2377,
                   "src": "238:10:3",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_ERC721Full_$2384_$",
+                    "typeIdentifier": "t_type$_t_contract$_ERC721Full_$2377_$",
                     "typeString": "type(contract ERC721Full)"
                   }
                 },
@@ -725,7 +725,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2716,
+                            "referencedDeclaration": 2709,
                             "src": "487:3:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -801,10 +801,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        2719,
-                        2720
+                        2712,
+                        2713
                       ],
-                      "referencedDeclaration": 2720,
+                      "referencedDeclaration": 2713,
                       "src": "479:7:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -875,9 +875,9 @@
                       "name": "_mint",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        2167
+                        2160
                       ],
-                      "referencedDeclaration": 2167,
+                      "referencedDeclaration": 2160,
                       "src": "558:5:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_uint256_$returns$__$",
@@ -990,7 +990,7 @@
         "id": 260,
         "nodeType": "ImportDirective",
         "scope": 299,
-        "sourceUnit": 2385,
+        "sourceUnit": 2378,
         "src": "25:69:3",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1004,10 +1004,10 @@
               "id": 261,
               "name": "ERC721Full",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 2384,
+              "referencedDeclaration": 2377,
               "src": "120:10:3",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC721Full_$2384",
+                "typeIdentifier": "t_contract$_ERC721Full_$2377",
                 "typeString": "contract ERC721Full"
               }
             },
@@ -1017,15 +1017,15 @@
           }
         ],
         "contractDependencies": [
-          710,
-          720,
-          2023,
-          2360,
-          2384,
-          2513,
-          2616,
-          2643,
-          2666
+          703,
+          713,
+          2016,
+          2353,
+          2377,
+          2506,
+          2609,
+          2636,
+          2659
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -1033,15 +1033,15 @@
         "id": 298,
         "linearizedBaseContracts": [
           298,
-          2384,
-          2513,
-          2666,
-          2360,
-          2643,
-          2023,
-          2616,
-          710,
-          720
+          2377,
+          2506,
+          2659,
+          2353,
+          2636,
+          2016,
+          2609,
+          703,
+          713
         ],
         "name": "MyLoomToken",
         "nodeType": "ContractDefinition",
@@ -1178,10 +1178,10 @@
                   "name": "ERC721Full",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 2384,
+                  "referencedDeclaration": 2377,
                   "src": "238:10:3",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_ERC721Full_$2384_$",
+                    "typeIdentifier": "t_type$_t_contract$_ERC721Full_$2377_$",
                     "typeString": "type(contract ERC721Full)"
                   }
                 },
@@ -1266,7 +1266,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2716,
+                            "referencedDeclaration": 2709,
                             "src": "487:3:3",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -1342,10 +1342,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        2719,
-                        2720
+                        2712,
+                        2713
                       ],
-                      "referencedDeclaration": 2720,
+                      "referencedDeclaration": 2713,
                       "src": "479:7:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1416,9 +1416,9 @@
                       "name": "_mint",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        2167
+                        2160
                       ],
-                      "referencedDeclaration": 2167,
+                      "referencedDeclaration": 2160,
                       "src": "558:5:3",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_uint256_$returns$__$",
@@ -1587,7 +1587,7 @@
     }
   },
   "schemaVersion": "3.0.14",
-  "updatedAt": "2020-02-24T07:22:34.762Z",
+  "updatedAt": "2020-02-27T07:11:34.198Z",
   "devdoc": {
     "methods": {
       "approve(address,uint256)": {

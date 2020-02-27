@@ -17,6 +17,7 @@
     "migrate:dappchain-bep2-token": "cd loom && npx truffle deploy --network extdev -f4 --to 4",
     "migrate:rinkeby-bep2-token": "cd ethereum && npx truffle deploy --network rinkeby -f 2 --to 2",
     "map:bep2-contracts": "node scripts/map-contracts bep2",
+    "payable-demo:withdraw-funds": "node scripts/withdraw-from-payable-demo-contract.js",
     "postinstall": "cd ethereum && npm install && cd .. && cd loom && npm install"
   },
   "keywords": [],
