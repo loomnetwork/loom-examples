@@ -66,6 +66,6 @@ function filterEvents (payableDemoContract, web3js) {
     console.log('Something went wrong.')
   }
   const ownerBalanceInWei = await ethCoin.getBalanceOfAsync(Address.fromString(`${client.chainId}:${account}`))
-  console.log('Owner\'s balance: ' + web3js.utils.fromWei(ownerBalanceInWei.toString(), 'ether'))
+  console.log(`Owner's balance: ${web3js.utils.fromWei(ownerBalanceInWei.toString(), 'ether')}`)
   client.disconnect()
 })()
