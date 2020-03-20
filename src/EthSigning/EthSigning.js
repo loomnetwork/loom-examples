@@ -24,11 +24,15 @@ export default class EthSigning extends UniversalSigning {
   async _setValue () {
     const ethAddress = this.accountMapping.ethereum.local.toString()
     const value = parseInt(this.counter, 10)
-    await this.contract.methods
-      .set(value)
-      .send({
-        from: ethAddress
-      })
+    try {
+      await this.contract.methods
+        .set(value)
+        .send({
+          from: ethAddress
+        })
+    } catch (error) {
+      console.log(error.message)
+    }
   }
 
   async increment () {
@@ -43,7 +47,7 @@ export default class EthSigning extends UniversalSigning {
       this.counter -= 1
       await this._setValue()
     } else {
-      console.log('counter should be > 1.')
+      console.log('counter should be >= 0.')
     }
   }
 
