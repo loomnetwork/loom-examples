@@ -2,6 +2,8 @@ import { EventBus } from './EventBus/EventBus'
 import EthSigning from './EthSigning/EthSigning'
 const Web3 = require('web3')
 
+Vue.use(Toasted)
+
 var sample = new Vue({
   el: '#counter',
   data: {
@@ -21,10 +23,12 @@ var sample = new Vue({
     },
 
     async increment () {
+      this.makeToast('Incrementing.')
       await this.EthSigningDemo.increment()
     },
 
     async decrement () {
+      this.makeToast('Decrementing.')
       await this.EthSigningDemo.decrement()
     },
 
@@ -34,8 +38,21 @@ var sample = new Vue({
         this.web3js = new Web3(window.web3.currentProvider)
         await ethereum.enable()
       } else {
-        alert('Metamask is not Enabled')
+        this.makeToast('Metamask is not enabled.')
       }
+      this.makeToast('Metamask is enabled.')
+    },
+    async makeToast (data) {
+      Vue.toasted.show(data, {
+        duration: 4000,
+        type: 'info',
+        action: {
+          text: 'Dismiss',
+          onClick: (e, toast) => {
+            toast.goAway(0)
+          }
+        }
+      })
     }
   },
   async mounted () {
