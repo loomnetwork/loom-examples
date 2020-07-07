@@ -60,7 +60,7 @@
     "js-sha256": "^0.9.0",
     "loom-js": "^1.70.0",
     "loom-truffle-provider": "^0.13.0",
-    "npm": "^6.9.0",
+    "npm": "^6.14.6",
     "path": "^0.12.7",
     "tronweb": "^2.6.2",
     "truffle-hdwallet-provider": "^1.0.10"
