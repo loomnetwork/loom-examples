@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "fs": "0.0.1-security",
-    "loom-truffle-provider": "^0.13.0",
+    "loom-truffle-provider": "^0.16.0",
     "openzeppelin-solidity": "^2.3.0",
     "path": "^0.12.7",
     "truffle": "^5.0.34",
